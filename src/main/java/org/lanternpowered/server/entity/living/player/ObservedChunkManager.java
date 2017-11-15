@@ -279,12 +279,12 @@ public final class ObservedChunkManager implements WorldEventListener {
                             this.coords.getX(), this.coords.getY(), changes.stream().map(coords -> {
                                 final int x = coords.getX() & 0xf;
                                 final int z = coords.getZ() & 0xf;
-                                return new MessagePlayOutBlockChange(new Vector3i(x, coords.getY(), z), chunk.getType(coords));
+                                return new MessagePlayOutBlockChange(new Vector3i(x, coords.getY(), z), chunk.getState(coords));
                             }).collect(Collectors.toList()));
                     this.clientObservers.forEach(player -> player.getConnection().send(message));
                 } else {
                     dirtyBlock = changes.iterator().next();
-                    final MessagePlayOutBlockChange message = new MessagePlayOutBlockChange(dirtyBlock, chunk.getType(dirtyBlock));
+                    final MessagePlayOutBlockChange message = new MessagePlayOutBlockChange(dirtyBlock, chunk.getState(dirtyBlock));
                     this.clientObservers.forEach(player -> player.getConnection().send(message));
                 }
 

@@ -25,20 +25,48 @@
  */
 package org.lanternpowered.server.data.type;
 
-import org.lanternpowered.server.catalog.PluginCatalogType;
+import org.lanternpowered.server.catalog.SimpleCatalogType;
 import org.spongepowered.api.data.type.InstrumentType;
 import org.spongepowered.api.effect.sound.SoundType;
+import org.spongepowered.api.effect.sound.SoundTypes;
 
-public class LanternInstrumentType extends PluginCatalogType.Base.Internal implements InstrumentType {
+import java.util.function.Supplier;
 
-    private final SoundType soundType;
+import javax.annotation.Nullable;
 
-    public LanternInstrumentType(String pluginId, String name, int internalId, SoundType soundType) {
-        super(pluginId, name, internalId);
-        this.soundType = soundType;
+public enum LanternInstrumentType implements InstrumentType, SimpleCatalogType {
+
+    HARP            ("harp", () -> SoundTypes.BLOCK_NOTE_HARP),
+    BASEDRUM        ("bass_drum", () -> SoundTypes.BLOCK_NOTE_BASEDRUM),
+    SNARE           ("snare", () -> SoundTypes.BLOCK_NOTE_SNARE),
+    HAT             ("high_hat", () -> SoundTypes.BLOCK_NOTE_HAT),
+    BASS            ("bass_attack", () -> SoundTypes.BLOCK_NOTE_BASS),
+    FLUTE           ("flute", () -> SoundTypes.BLOCK_NOTE_FLUTE),
+    BELL            ("bell", () -> SoundTypes.BLOCK_NOTE_BELL),
+    GUITAR          ("guitar", () -> SoundTypes.BLOCK_NOTE_GUITAR),
+    CHIME           ("chime", () -> SoundTypes.BLOCK_NOTE_CHIME),
+    XYLOPHONE       ("xylophone", () -> SoundTypes.BLOCK_NOTE_XYLOPHONE),
+    ;
+
+    private final String identifier;
+    private final Supplier<SoundType> soundTypeSupplier;
+
+    @Nullable private SoundType soundType;
+
+    LanternInstrumentType(String identifier, Supplier<SoundType> soundTypeSupplier) {
+        this.identifier = identifier;
+        this.soundTypeSupplier = soundTypeSupplier;
+    }
+
+    @Override
+    public String getId() {
+        return this.identifier;
     }
 
     public SoundType getSound() {
+        if (this.soundType == null) {
+            this.soundType = this.soundTypeSupplier.get();
+        }
         return this.soundType;
     }
 }

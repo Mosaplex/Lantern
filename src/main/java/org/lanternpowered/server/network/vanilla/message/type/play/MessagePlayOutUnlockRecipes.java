@@ -26,20 +26,20 @@
 package org.lanternpowered.server.network.vanilla.message.type.play;
 
 import com.google.common.base.MoreObjects;
-import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntLists;
+import com.google.common.collect.ImmutableList;
 import org.lanternpowered.server.network.message.Message;
+import org.lanternpowered.server.util.collect.Collections3;
 
-import java.util.Arrays;
+import java.util.List;
 
 public abstract class MessagePlayOutUnlockRecipes implements Message {
 
     private final boolean openRecipeBook;
     private final boolean craftingFilter;
-    private final IntList recipeIds;
+    private final List<String> recipeIds;
 
-    private MessagePlayOutUnlockRecipes(boolean openRecipeBook, boolean craftingFilter, IntList recipeIds) {
-        this.recipeIds = IntLists.unmodifiable(recipeIds);
+    private MessagePlayOutUnlockRecipes(boolean openRecipeBook, boolean craftingFilter, List<String> recipeIds) {
+        this.recipeIds = ImmutableList.copyOf(recipeIds);
         this.openRecipeBook = openRecipeBook;
         this.craftingFilter = craftingFilter;
     }
@@ -56,10 +56,10 @@ public abstract class MessagePlayOutUnlockRecipes implements Message {
         return MoreObjects.toStringHelper(getClass().getSuperclass().getSimpleName() + "." + getClass().getSimpleName())
                 .add("openRecipeBook", this.openRecipeBook)
                 .add("craftingFilter", this.craftingFilter)
-                .add("recipeIds", Arrays.toString(this.recipeIds.toIntArray()));
+                .add("recipeIds", Collections3.toString(this.recipeIds));
     }
 
-    public IntList getRecipeIds() {
+    public List<String> getRecipeIds() {
         return this.recipeIds;
     }
 
@@ -70,34 +70,34 @@ public abstract class MessagePlayOutUnlockRecipes implements Message {
 
     public final static class Remove extends MessagePlayOutUnlockRecipes {
 
-        public Remove(boolean openRecipeBook, boolean craftingFilter, IntList recipeIds) {
+        public Remove(boolean openRecipeBook, boolean craftingFilter, List<String> recipeIds) {
             super(openRecipeBook, craftingFilter, recipeIds);
         }
     }
 
     public final static class Init extends MessagePlayOutUnlockRecipes {
 
-        private final IntList recipeIdsToBeDisplayed;
+        private final List<String> recipeIdsToBeDisplayed;
 
-        public Init(boolean openRecipeBook, boolean craftingFilter, IntList recipeIds, IntList recipeIdsToBeDisplayed) {
+        public Init(boolean openRecipeBook, boolean craftingFilter, List<String> recipeIds, List<String> recipeIdsToBeDisplayed) {
             super(openRecipeBook, craftingFilter, recipeIds);
-            this.recipeIdsToBeDisplayed = IntLists.unmodifiable(recipeIdsToBeDisplayed);
+            this.recipeIdsToBeDisplayed = ImmutableList.copyOf(recipeIdsToBeDisplayed);
         }
 
-        public IntList getRecipeIdsToBeDisplayed() {
+        public List<String> getRecipeIdsToBeDisplayed() {
             return this.recipeIdsToBeDisplayed;
         }
 
         @Override
         public MoreObjects.ToStringHelper toStringHelper() {
             return super.toStringHelper()
-                    .add("recipeIdsToBeDisplayed", Arrays.toString(this.recipeIdsToBeDisplayed.toIntArray()));
+                    .add("recipeIdsToBeDisplayed", Collections3.toString(this.recipeIdsToBeDisplayed));
         }
     }
 
     public final static class Add extends MessagePlayOutUnlockRecipes {
 
-        public Add(boolean openRecipeBook, boolean craftingFilter, IntList recipeIds) {
+        public Add(boolean openRecipeBook, boolean craftingFilter, List<String> recipeIds) {
             super(openRecipeBook, craftingFilter, recipeIds);
         }
     }

@@ -34,6 +34,7 @@ import static org.lanternpowered.server.data.key.LanternKeyFactory.makeValueKey;
 import com.google.common.reflect.TypeToken;
 import org.lanternpowered.server.data.type.LanternBedPart;
 import org.lanternpowered.server.data.type.LanternDoorHalf;
+import org.lanternpowered.server.data.type.RedstoneConnectionType;
 import org.lanternpowered.server.effect.potion.PotionType;
 import org.lanternpowered.server.extra.accessory.Accessory;
 import org.lanternpowered.server.inventory.InventorySnapshot;
@@ -42,6 +43,7 @@ import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.type.HandType;
+import org.spongepowered.api.data.type.InstrumentType;
 import org.spongepowered.api.data.type.SkinPart;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.data.value.mutable.MutableBoundedValue;
@@ -141,6 +143,18 @@ public final class LanternKeys {
 
     public static final Key<Value<Boolean>> DUMMY =
             makeValueKey(Boolean.class, DataQuery.of("Dummy"), "dummy");
+
+    public static final Key<Value<InstrumentType>> INSTRUMENT_TYPE =
+            makeValueKey(InstrumentType.class, DataQuery.of("InstrumentType"), "instrument_type");
+
+    public static final Key<Value<RedstoneConnectionType>> REDSTONE_NORTH_CONNECTION =
+            makeValueKey(RedstoneConnectionType.class, DataQuery.of("RedstoneNorthConnection"), "redstone_north_connection");
+    public static final Key<Value<RedstoneConnectionType>> REDSTONE_SOUTH_CONNECTION =
+            makeValueKey(RedstoneConnectionType.class, DataQuery.of("RedstoneSouthConnection"), "redstone_south_connection");
+    public static final Key<Value<RedstoneConnectionType>> REDSTONE_EAST_CONNECTION =
+            makeValueKey(RedstoneConnectionType.class, DataQuery.of("RedstoneEastConnection"), "redstone_east_connection");
+    public static final Key<Value<RedstoneConnectionType>> REDSTONE_WEST_CONNECTION =
+            makeValueKey(RedstoneConnectionType.class, DataQuery.of("RedstoneWestConnection"), "redstone_west_connection");
 
     private LanternKeys() {
     }

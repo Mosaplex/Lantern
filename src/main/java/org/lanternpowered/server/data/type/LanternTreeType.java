@@ -32,7 +32,7 @@ import org.lanternpowered.server.catalog.SimpleCatalogType;
 import org.spongepowered.api.data.type.TreeType;
 import org.spongepowered.api.text.translation.Translation;
 
-public enum LanternTreeType implements TreeType, SimpleCatalogType, InternalCatalogType {
+public enum LanternTreeType implements TreeType, SimpleCatalogType {
 
     OAK             ("oak", "oak"),
     SPRUCE          ("spruce", "spruce"),
@@ -70,10 +70,4 @@ public enum LanternTreeType implements TreeType, SimpleCatalogType, InternalCata
     public String getId() {
         return this.identifier;
     }
-
-    @Override
-    public int getInternalId() {
-        return ordinal();
-    }
-
 }

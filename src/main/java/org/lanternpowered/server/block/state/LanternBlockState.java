@@ -30,9 +30,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Lists;
 import org.lanternpowered.server.block.LanternBlockSnapshot;
 import org.lanternpowered.server.block.LanternBlockType;
 import org.lanternpowered.server.block.trait.LanternBlockTrait;
@@ -59,6 +61,7 @@ import org.spongepowered.api.world.World;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -91,14 +94,12 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
     private final String id;
 
     // A internal id that is used for faster lookups
-    int internalId;
+    final int internalId;
 
-    // Whether this state is extended
-    boolean extended;
-
-    LanternBlockState(LanternBlockStateMap baseState, ImmutableMap<BlockTrait<?>, Comparable<?>> traitValues) {
+    LanternBlockState(LanternBlockStateMap baseState, ImmutableMap<BlockTrait<?>, Comparable<?>> traitValues, int internalId) {
         this.traitValues = traitValues;
         this.baseState = baseState;
+        this.internalId = internalId;
 
         ImmutableBiMap.Builder<Key<Value<?>>, BlockTrait<?>> builder = ImmutableBiMap.builder();
         for (BlockTrait trait : traitValues.keySet()) {
@@ -149,7 +150,9 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
 
     @Override
     public BlockState withExtendedProperties(Location<World> location) {
-        return this.baseState.getBlockType().getExtendedBlockStateProvider().get(this, checkNotNull(location, "location"), null);
+        // Extended block states are no more, got removed
+        // in 1.13, all states are now server side.
+        return this;
     }
 
     @Override
@@ -169,7 +172,8 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
         if (!supports(key) || !(trait = this.keyToBlockTrait.get(key)).getPredicate().test(value)) {
             return Optional.empty();
         }
-        if (this.traitValues.get(trait) == value) {
+        if (((LanternBlockTrait) trait).getKeyTraitValueTransformer()
+                .toKeyValue(this.traitValues.get(trait)) == value) {
             return Optional.of(this);
         }
         return Optional.of(this.propertyValueTable.row(trait).get(value));
@@ -181,7 +185,8 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
             return Optional.empty();
         }
         final BlockTrait trait = this.keyToBlockTrait.get(value.getKey());
-        if (this.traitValues.get(trait) == value.get()) {
+        if (((LanternBlockTrait) trait).getKeyTraitValueTransformer()
+                .toKeyValue(this.traitValues.get(trait)) == value.get()) {
             return Optional.of(this);
         }
         return Optional.of(this.propertyValueTable.row(trait).get(value.get()));
@@ -259,7 +264,9 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
         if (!supports(key)) {
             return Optional.empty();
         }
-        return Optional.ofNullable((E) this.traitValues.get(this.keyToBlockTrait.get(key)));
+        final BlockTrait<?> blockTrait = this.keyToBlockTrait.get(key);
+        return Optional.of((E) ((LanternBlockTrait) blockTrait)
+                .getKeyTraitValueTransformer().toKeyValue(this.traitValues.get(blockTrait)));
     }
 
     @Override
@@ -268,7 +275,8 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
             return Optional.empty();
         }
         final BlockTrait<?> blockTrait = this.keyToBlockTrait.get(key);
-        return Optional.of((V) new LanternValue(key, this.traitValues.get(blockTrait)));
+        return Optional.of((V) new LanternValue(key, ((LanternBlockTrait) blockTrait)
+                .getKeyTraitValueTransformer().toKeyValue(this.traitValues.get(blockTrait))));
     }
 
     @Override
@@ -297,7 +305,7 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
         final World world = location.getExtent();
         final Vector3i pos = location.getBlockPosition();
         // TODO: Tile entity data
-        return new LanternBlockSnapshot(location, this, this,
+        return new LanternBlockSnapshot(location, this,
                 world.getCreator(pos), world.getNotifier(pos), ImmutableMap.of());
     }
 
@@ -328,13 +336,15 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
                 last = next;
             }
         } else {
-            final Iterator<T> it = blockTrait.getPossibleValues().iterator();
+            final List<T> list = Lists.newArrayList(blockTrait.getPossibleValues());
+            list.sort(Comparator.naturalOrder());
+            final Iterator<T> it = list.iterator();
             while (it.hasNext()) {
                 if (it.next() == value) {
                     if (it.hasNext()) {
                         value = it.next();
                     } else {
-                        value = blockTrait.getPossibleValues().iterator().next();
+                        value = list.get(0);
                     }
                 }
             }
@@ -391,10 +401,6 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
     public boolean supportsTraitValue(BlockTrait<?> blockTrait, Object value) {
         return supportsTrait(checkNotNull(blockTrait, "blockTrait")) &&
                 ((Predicate) blockTrait.getPredicate()).test(checkNotNull(value, "value"));
-    }
-
-    public boolean isExtended() {
-        return this.extended;
     }
 
     @Override

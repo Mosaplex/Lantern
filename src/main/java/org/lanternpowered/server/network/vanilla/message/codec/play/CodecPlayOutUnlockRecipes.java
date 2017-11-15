@@ -27,11 +27,12 @@ package org.lanternpowered.server.network.vanilla.message.codec.play;
 
 import io.netty.handler.codec.CodecException;
 import io.netty.handler.codec.EncoderException;
-import it.unimi.dsi.fastutil.ints.IntList;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 import org.lanternpowered.server.network.message.codec.Codec;
 import org.lanternpowered.server.network.message.codec.CodecContext;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutUnlockRecipes;
+
+import java.util.List;
 
 public final class CodecPlayOutUnlockRecipes implements Codec<MessagePlayOutUnlockRecipes> {
 
@@ -49,13 +50,13 @@ public final class CodecPlayOutUnlockRecipes implements Codec<MessagePlayOutUnlo
         }
         buf.writeBoolean(message.hasOpenCraftingBook());
         buf.writeBoolean(message.hasCraftingFilter());
-        IntList recipeIds = message.getRecipeIds();
+        List<String> recipeIds = message.getRecipeIds();
         buf.writeVarInt(recipeIds.size());
-        recipeIds.forEach(buf::writeVarInt);
+        recipeIds.forEach(buf::writeString);
         if (message instanceof MessagePlayOutUnlockRecipes.Init) {
             recipeIds = ((MessagePlayOutUnlockRecipes.Init) message).getRecipeIdsToBeDisplayed();
             buf.writeVarInt(recipeIds.size());
-            recipeIds.forEach(buf::writeVarInt);
+            recipeIds.forEach(buf::writeString);
         }
         return buf;
     }

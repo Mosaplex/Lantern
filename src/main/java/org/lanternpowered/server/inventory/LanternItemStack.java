@@ -208,7 +208,7 @@ public class LanternItemStack implements ItemStack, AbstractPropertyHolder, IAdd
 
     @Override
     public boolean isEmpty() {
-        return this.itemType == ItemTypes.NONE || this.quantity <= 0;
+        return this.itemType == ItemTypes.AIR || this.quantity <= 0;
     }
 
     @Override

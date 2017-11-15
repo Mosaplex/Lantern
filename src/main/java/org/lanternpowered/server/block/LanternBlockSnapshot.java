@@ -87,29 +87,27 @@ public class LanternBlockSnapshot implements BlockSnapshot, AbstractPropertyHold
 
     @Nullable final BlockLocation location;
     private final BlockState state;
-    @Nullable private final BlockState extendedState;
     private final Optional<UUID> notifier;
     private final Optional<UUID> creator;
     @Nullable final Map<Key<?>, Object> tileEntityData;
 
-    public LanternBlockSnapshot(Location<World> location, BlockState blockState, @Nullable BlockState extendedState,
+    public LanternBlockSnapshot(Location<World> location, BlockState blockState,
             Optional<UUID> creator, Optional<UUID> notifier, @Nullable Map<Key<?>, Object> tileEntityData) {
-        this(new BlockLocation(checkNotNull(location, "location")), blockState, extendedState, creator, notifier, tileEntityData);
+        this(new BlockLocation(checkNotNull(location, "location")), blockState, creator, notifier, tileEntityData);
     }
 
-    public LanternBlockSnapshot(UUID worldUUID, Vector3i position, BlockState blockState, @Nullable BlockState extendedState,
+    public LanternBlockSnapshot(UUID worldUUID, Vector3i position, BlockState blockState,
             Optional<UUID> creator, Optional<UUID> notifier, @Nullable Map<Key<?>, Object> tileEntityData) {
-        this(new BlockLocation(worldUUID, position), blockState, extendedState, creator, notifier, tileEntityData);
+        this(new BlockLocation(worldUUID, position), blockState, creator, notifier, tileEntityData);
     }
 
-    public LanternBlockSnapshot(BlockState blockState, @Nullable BlockState extendedState,
+    public LanternBlockSnapshot(BlockState blockState,
             Optional<UUID> notifier, Optional<UUID> creator, @Nullable Map<Key<?>, Object> tileEntityData) {
-        this((BlockLocation) null, blockState, extendedState, creator, notifier, tileEntityData);
+        this((BlockLocation) null, blockState, creator, notifier, tileEntityData);
     }
 
-    LanternBlockSnapshot(@Nullable BlockLocation location, BlockState blockState, @Nullable BlockState extendedState,
+    LanternBlockSnapshot(@Nullable BlockLocation location, BlockState blockState,
             Optional<UUID> creator, Optional<UUID> notifier, @Nullable Map<Key<?>, Object> tileEntityData) {
-        this.extendedState = extendedState;
         this.notifier = checkNotNull(notifier, "notifier");
         this.creator = checkNotNull(creator, "creator");
         this.state = checkNotNull(blockState, "blockState");
@@ -143,18 +141,20 @@ public class LanternBlockSnapshot implements BlockSnapshot, AbstractPropertyHold
     }
 
     @Override
-    public BlockState getExtendedState() {
-        return this.extendedState == null ? this.state : this.extendedState;
-    }
-
-    @Override
     public BlockState getState() {
         return this.state;
     }
 
     @Override
+    public BlockState getExtendedState() {
+        // Extended block states are no more, got removed
+        // in 1.13, all states are now server side.
+        return this.state;
+    }
+
+    @Override
     public LanternBlockSnapshot copy() {
-        return new LanternBlockSnapshot(this.location, this.state, extendedState, this.creator, this.notifier, tileEntityData);
+        return new LanternBlockSnapshot(this.location, this.state, this.creator, this.notifier, tileEntityData);
     }
 
     @Override
@@ -302,7 +302,7 @@ public class LanternBlockSnapshot implements BlockSnapshot, AbstractPropertyHold
     @Override
     public BlockSnapshot withLocation(Location<World> location) {
         checkNotNull(location, "location");
-        return new LanternBlockSnapshot(location, this.state, extendedState, this.creator, this.notifier, tileEntityData);
+        return new LanternBlockSnapshot(location, this.state, this.creator, this.notifier, tileEntityData);
     }
 
     @Override

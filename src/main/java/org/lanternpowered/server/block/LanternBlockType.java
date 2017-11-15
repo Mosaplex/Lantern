@@ -71,8 +71,6 @@ public class LanternBlockType extends PluginCatalogType.Base implements BlockTyp
 
     @Nullable private final TileEntityProvider tileEntityProvider;
 
-    private final ExtendedBlockStateProvider extendedBlockStateProvider;
-
     /**
      * The default block state of this block type.
      */
@@ -89,26 +87,23 @@ public class LanternBlockType extends PluginCatalogType.Base implements BlockTyp
 
     LanternBlockType(String pluginId, String name, Iterable<BlockTrait<?>> blockTraits,
             TranslationProvider translationProvider, MutableBehaviorPipeline<Behavior> behaviorPipeline,
-            @Nullable TileEntityProvider tileEntityProvider, ExtendedBlockStateProvider extendedBlockStateProvider) {
+            @Nullable TileEntityProvider tileEntityProvider) {
         super(pluginId, name);
         this.translationProvider = translationProvider;
         this.behaviorPipeline = behaviorPipeline;
         this.tileEntityProvider = tileEntityProvider;
         this.tickRandomly = !behaviorPipeline.pipeline(RandomTickBehavior.class).getBehaviors().isEmpty();
-        this.extendedBlockStateProvider = extendedBlockStateProvider;
         this.blockStateBase = new LanternBlockStateMap(this, blockTraits);
         this.defaultBlockState = this.blockStateBase.getBaseState();
     }
 
     LanternBlockType(String pluginId, String id, String name,
             Iterable<BlockTrait<?>> blockTraits, TranslationProvider translationProvider,
-            MutableBehaviorPipeline<Behavior> behaviorPipeline, @Nullable TileEntityProvider tileEntityProvider,
-            ExtendedBlockStateProvider extendedBlockStateProvider) {
+            MutableBehaviorPipeline<Behavior> behaviorPipeline, @Nullable TileEntityProvider tileEntityProvider) {
         super(pluginId, id, name);
         this.translationProvider = translationProvider;
         this.behaviorPipeline = behaviorPipeline;
         this.tileEntityProvider = tileEntityProvider;
-        this.extendedBlockStateProvider = extendedBlockStateProvider;
         this.tickRandomly = !behaviorPipeline.pipeline(RandomTickBehavior.class).getBehaviors().isEmpty();
         this.blockStateBase = new LanternBlockStateMap(this, blockTraits);
         this.defaultBlockState = this.blockStateBase.getBaseState();
@@ -219,10 +214,6 @@ public class LanternBlockType extends PluginCatalogType.Base implements BlockTyp
         return null; // TODO
     }
 
-    public ExtendedBlockStateProvider getExtendedBlockStateProvider() {
-        return this.extendedBlockStateProvider;
-    }
-
     void setPropertyProviderCollection(PropertyProviderCollection propertyProviderCollection) {
         this.propertyProviderCollection = propertyProviderCollection;
     }
@@ -235,4 +226,5 @@ public class LanternBlockType extends PluginCatalogType.Base implements BlockTyp
     void setBoundingBoxProvider(@Nullable ObjectProvider<AABB> boundingBoxProvider) {
         this.boundingBoxProvider = boundingBoxProvider;
     }
+
 }

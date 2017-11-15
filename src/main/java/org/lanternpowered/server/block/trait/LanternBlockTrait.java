@@ -26,24 +26,39 @@
 package org.lanternpowered.server.block.trait;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableCollection;
 import org.lanternpowered.server.util.collect.Collections3;
 import org.spongepowered.api.block.trait.BlockTrait;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.mutable.Value;
 
-import java.util.Collection;
 import java.util.function.Predicate;
 
-@SuppressWarnings({"unchecked","rawtypes"})
-public abstract class LanternBlockTrait<T extends Comparable<T>> implements BlockTrait<T> {
+import javax.annotation.Nullable;
 
-    private final Key<? extends Value<T>> key;
-    private final ImmutableSet<T> possibleValues;
+@SuppressWarnings({"unchecked","rawtypes"})
+public abstract class LanternBlockTrait<T extends Comparable<T>, V> implements BlockTrait<T> {
+
+    private final static KeyTraitValueTransformer DEFAULT_TRANSFORMER = new KeyTraitValueTransformer() {
+        @Override
+        public Object toKeyValue(Comparable traitValue) {
+            return traitValue;
+        }
+        @Override
+        public Comparable toTraitValue(Object keyValue) {
+            return (Comparable) keyValue;
+        }
+    };
+
+    private final Key<? extends Value<V>> key;
+    private final ImmutableCollection<T> possibleValues;
     private final Class<T> valueClass;
     private final String name;
+    private final KeyTraitValueTransformer<T, V> keyTraitValueTransformer;
 
-    LanternBlockTrait(String name, Key<? extends Value<T>> key, Class<T> valueClass, ImmutableSet<T> possibleValues) {
+    LanternBlockTrait(String name, Key<? extends Value<V>> key, Class<T> valueClass, ImmutableCollection<T> possibleValues,
+            @Nullable KeyTraitValueTransformer<T, V> keyTraitValueTransformer) {
+        this.keyTraitValueTransformer = keyTraitValueTransformer == null ? DEFAULT_TRANSFORMER : keyTraitValueTransformer;
         this.possibleValues = possibleValues;
         this.valueClass = valueClass;
         this.name = name;
@@ -55,8 +70,12 @@ public abstract class LanternBlockTrait<T extends Comparable<T>> implements Bloc
      * 
      * @return the block trait key
      */
-    public Key<? extends Value<T>> getKey() {
+    public Key<? extends Value<V>> getKey() {
         return this.key;
+    }
+
+    public KeyTraitValueTransformer<T, V> getKeyTraitValueTransformer() {
+        return this.keyTraitValueTransformer;
     }
 
     @Override
@@ -70,7 +89,7 @@ public abstract class LanternBlockTrait<T extends Comparable<T>> implements Bloc
     }
 
     @Override
-    public Collection<T> getPossibleValues() {
+    public ImmutableCollection<T> getPossibleValues() {
         return this.possibleValues;
     }
 

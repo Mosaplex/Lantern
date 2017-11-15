@@ -25,11 +25,10 @@
  */
 package org.lanternpowered.server.data.type;
 
-import org.lanternpowered.server.catalog.InternalCatalogType;
 import org.lanternpowered.server.catalog.SimpleCatalogType;
 import org.spongepowered.api.data.type.ComparatorType;
 
-public enum LanternComparatorType implements ComparatorType, SimpleCatalogType, InternalCatalogType {
+public enum LanternComparatorType implements ComparatorType, SimpleCatalogType {
 
     COMPARE         ("compare"),
     SUBTRACT        ("subtract"),
@@ -45,10 +44,4 @@ public enum LanternComparatorType implements ComparatorType, SimpleCatalogType, 
     public String getId() {
         return this.identifier;
     }
-
-    @Override
-    public int getInternalId() {
-        return ordinal();
-    }
-
 }

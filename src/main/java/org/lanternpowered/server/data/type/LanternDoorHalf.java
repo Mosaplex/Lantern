@@ -25,10 +25,9 @@
  */
 package org.lanternpowered.server.data.type;
 
-import org.lanternpowered.server.catalog.InternalCatalogType;
 import org.lanternpowered.server.catalog.SimpleCatalogType;
 
-public enum LanternDoorHalf implements SimpleCatalogType, InternalCatalogType {
+public enum LanternDoorHalf implements SimpleCatalogType {
 
     UPPER       ("upper"),
     LOWER       ("lower"),
@@ -43,11 +42,6 @@ public enum LanternDoorHalf implements SimpleCatalogType, InternalCatalogType {
     @Override
     public String getId() {
         return this.identifier;
-    }
-
-    @Override
-    public int getInternalId() {
-        return ordinal();
     }
 
 }

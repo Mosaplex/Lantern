@@ -171,6 +171,7 @@ public class PlayerEntityProtocol extends HumanoidEntityProtocol<LanternPlayer> 
     }
 
     private void sendHat(EntityProtocolUpdateContext context, TopHat hat) {
+        /*
         final LanternItemStack paneItem;
         final LanternItemStack blockItem;
 
@@ -199,6 +200,7 @@ public class PlayerEntityProtocol extends HumanoidEntityProtocol<LanternPlayer> 
             throw new IllegalStateException();
         }
 
+        // TODO: Update
         byte flags = 0x20;
         if (getEntity().get(Keys.GLOWING).get()) {
             flags |= 0x40;
@@ -226,7 +228,7 @@ public class PlayerEntityProtocol extends HumanoidEntityProtocol<LanternPlayer> 
 
         sendPassengers(context, 8, 10);
         sendPassengers(context, 9, 11);
-
+*/
         /*
         final LanternItemStack boneItem = new LanternItemStack(ItemTypes.BONE);
 
@@ -349,7 +351,7 @@ public class PlayerEntityProtocol extends HumanoidEntityProtocol<LanternPlayer> 
                 context.sendToAll(() -> new MessagePlayOutDestroyEntities(this.elytraRocketId));
             } else if (elytraFlying && elytraSpeedBoost) {
                 // Create the fireworks data item
-                final LanternItemStack itemStack = new LanternItemStack(ItemTypes.FIREWORKS);
+                final LanternItemStack itemStack = new LanternItemStack(ItemTypes.FIREWORK_ROCKET);
 
                 // Write the item to a parameter list
                 final ByteBufParameterList parameterList = new ByteBufParameterList(ByteBufferAllocator.unpooled());

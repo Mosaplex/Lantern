@@ -85,6 +85,7 @@
     "block.portal.ambient",
     "block.portal.travel",
     "block.portal.trigger",
+    "block.pumpkin.carve",
     "block.redstone_torch.burnout",
     "block.sand.break",
     "block.sand.fall",

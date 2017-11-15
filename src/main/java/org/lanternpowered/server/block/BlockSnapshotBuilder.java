@@ -67,7 +67,6 @@ public abstract class BlockSnapshotBuilder extends AbstractDataBuilder<BlockSnap
 
     UUID worldUUID;
     private BlockState blockState;
-    @Nullable private BlockState extendedBlockState;
     Vector3i position;
 
     @Nullable private UUID creator;
@@ -101,7 +100,6 @@ public abstract class BlockSnapshotBuilder extends AbstractDataBuilder<BlockSnap
     @Override
     public BlockSnapshotBuilder blockState(BlockState blockState) {
         this.blockState = checkNotNull(blockState, "blockState");
-        this.extendedBlockState = null;
         return this;
     }
 
@@ -120,9 +118,6 @@ public abstract class BlockSnapshotBuilder extends AbstractDataBuilder<BlockSnap
         final World world = location.getExtent();
         this.creator = world.getCreator(location.getBlockPosition()).orElse(null);
         this.notifier = world.getNotifier(location.getBlockPosition()).orElse(null);
-        final BlockState extendedState = ((LanternBlockType) this.blockState.getType())
-                .getExtendedBlockStateProvider().get(this.blockState, location, null);
-        this.extendedBlockState = extendedState == this.blockState ? null : extendedState;
         return this;
     }
 
@@ -171,18 +166,15 @@ public abstract class BlockSnapshotBuilder extends AbstractDataBuilder<BlockSnap
         return this;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public BlockSnapshotBuilder from(BlockSnapshot holder) {
         final LanternBlockSnapshot snapshot = (LanternBlockSnapshot) checkNotNull(holder, "holder");
         this.creator = snapshot.getCreator().orElse(null);
         this.notifier = snapshot.getNotifier().orElse(null);
         this.blockState = snapshot.getState();
-        final BlockState extendedState = holder.getExtendedState();
-        this.extendedBlockState = extendedState == this.blockState ? null : extendedState;
         final LanternBlockSnapshot.BlockLocation blockLocation = snapshot.location;
-        //noinspection ConstantConditions
         this.worldUUID = blockLocation == null ? null : blockLocation.world.getUniqueId();
-        //noinspection ConstantConditions
         this.position = blockLocation == null ? null : blockLocation.position;
         this.tileEntityData.clear();
         if (snapshot.tileEntityData != null) {
@@ -196,7 +188,7 @@ public abstract class BlockSnapshotBuilder extends AbstractDataBuilder<BlockSnap
         checkState(this.blockState != null, "The block state must be set.");
         final LanternBlockSnapshot.BlockLocation blockLocation = this.worldUUID == null  || this.position == null ? null :
                 new LanternBlockSnapshot.BlockLocation(this.worldUUID, this.position);
-        return new LanternBlockSnapshot(blockLocation, this.blockState, this.extendedBlockState, Optional.ofNullable(this.creator),
+        return new LanternBlockSnapshot(blockLocation, this.blockState, Optional.ofNullable(this.creator),
                 Optional.ofNullable(this.notifier), ImmutableMap.copyOf(this.tileEntityData));
     }
 
@@ -209,7 +201,6 @@ public abstract class BlockSnapshotBuilder extends AbstractDataBuilder<BlockSnap
     public BlockSnapshotBuilder reset() {
         this.position = null;
         this.blockState = null;
-        this.extendedBlockState = null;
         this.worldUUID = null;
         this.notifier = null;
         this.creator = null;

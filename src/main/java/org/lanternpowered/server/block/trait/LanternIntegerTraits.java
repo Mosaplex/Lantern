@@ -25,10 +25,11 @@
  */
 package org.lanternpowered.server.block.trait;
 
+import org.lanternpowered.server.data.type.LanternNotePitch;
+import org.lanternpowered.server.game.registry.type.data.NotePitchRegistryModule;
 import org.spongepowered.api.block.trait.IntegerTrait;
-import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.util.Direction;
+import org.spongepowered.api.data.type.NotePitch;
 
 public final class LanternIntegerTraits {
 
@@ -37,6 +38,20 @@ public final class LanternIntegerTraits {
     public static final IntegerTrait POWER = LanternIntegerTrait.ofRange("power", Keys.POWER, 0, 15);
 
     public static final IntegerTrait MOISTURE = LanternIntegerTrait.ofRange("moisture", Keys.MOISTURE, 0, 7);
+
+    // TODO: Actually use the following states properly?
+
+    public static final IntegerTrait NOTE = LanternIntegerTrait.ofRangeTransformed("note", Keys.NOTE_PITCH,
+            new KeyTraitValueTransformer<Integer, NotePitch>() {
+                @Override
+                public NotePitch toKeyValue(Integer traitValue) {
+                    return NotePitchRegistryModule.get().getByInternalId(traitValue).get();
+                }
+                @Override
+                public Integer toTraitValue(NotePitch keyValue) {
+                    return ((LanternNotePitch) keyValue).getInternalId();
+                }
+            }, 0, 24);
 
     private LanternIntegerTraits() {
     }

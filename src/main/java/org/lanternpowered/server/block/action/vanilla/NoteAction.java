@@ -28,25 +28,23 @@ package org.lanternpowered.server.block.action.vanilla;
 import org.lanternpowered.server.block.action.BlockAction;
 import org.lanternpowered.server.block.action.BlockActionData;
 import org.lanternpowered.server.data.type.LanternInstrumentType;
-import org.lanternpowered.server.data.type.LanternNotePitch;
 import org.spongepowered.api.data.type.InstrumentType;
-import org.spongepowered.api.data.type.NotePitch;
 
 public final class NoteAction implements BlockAction {
 
     private final InstrumentType instrumentType;
-    private final NotePitch notePitch;
+    private final int notePitch;
 
-    public NoteAction(InstrumentType instrumentType, NotePitch notePitch) {
+    public NoteAction(InstrumentType instrumentType, int notePitch) {
         this.instrumentType = instrumentType;
         this.notePitch = notePitch;
     }
 
     @Override
     public void fill(BlockActionData actionData) {
-        final int instrumentId = ((LanternInstrumentType) this.instrumentType).getInternalId();
-        actionData.set(0, instrumentId >= 100 ? 0 : instrumentId);
-        actionData.set(1, ((LanternNotePitch) this.notePitch).getInternalId());
+        final int instrumentId = ((LanternInstrumentType) this.instrumentType).ordinal();
+        actionData.set(0, instrumentId);
+        actionData.set(1, this.notePitch);
     }
 
     @Override

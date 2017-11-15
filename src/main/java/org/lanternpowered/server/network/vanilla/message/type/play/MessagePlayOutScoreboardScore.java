@@ -32,7 +32,7 @@ public abstract class MessagePlayOutScoreboardScore implements Message {
     private final String objectiveName;
     private final String scoreName;
 
-    public MessagePlayOutScoreboardScore(String objectiveName, String scoreName) {
+    MessagePlayOutScoreboardScore(String objectiveName, String scoreName) {
         this.objectiveName = objectiveName;
         this.scoreName = scoreName;
     }

@@ -31,7 +31,7 @@ import org.lanternpowered.server.network.buffer.ByteBuffer;
 import org.lanternpowered.server.network.buffer.objects.Types;
 import org.lanternpowered.server.network.message.codec.Codec;
 import org.lanternpowered.server.network.message.codec.CodecContext;
-import org.lanternpowered.server.network.objects.RawItemStack;
+import org.lanternpowered.server.network.item.RawItemStack;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityEquipment;
 import org.spongepowered.api.item.inventory.ItemStack;
 

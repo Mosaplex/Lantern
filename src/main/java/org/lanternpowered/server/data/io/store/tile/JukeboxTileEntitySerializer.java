@@ -47,9 +47,10 @@ public class JukeboxTileEntitySerializer<T extends LanternJukebox> extends TileE
         final Optional<DataView> optRecordItem = dataView.getView(RECORD_ITEM);
         if (optRecordItem.isPresent()) {
             object.insertRecord(ItemStackStore.INSTANCE.deserialize(optRecordItem.get()));
-        } else {
+        } else {/*
             dataView.getInt(RECORD).ifPresent(record -> ItemRegistryModule.get().getTypeByInternalId(record)
-                    .ifPresent(itemType -> object.insertRecord(ItemStack.of(itemType, 1))));
+                    .ifPresent(itemType -> object.insertRecord(ItemStack.of(itemType, 1))));*/
+            //TODO:Update
         }
     }
 

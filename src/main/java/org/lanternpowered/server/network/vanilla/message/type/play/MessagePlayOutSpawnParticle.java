@@ -28,6 +28,8 @@ package org.lanternpowered.server.network.vanilla.message.type.play;
 import com.flowpowered.math.vector.Vector3f;
 import org.lanternpowered.server.network.message.Message;
 
+import javax.annotation.Nullable;
+
 public final class MessagePlayOutSpawnParticle implements Message {
 
     private final int particleId;
@@ -37,17 +39,17 @@ public final class MessagePlayOutSpawnParticle implements Message {
 
     private final float data;
     private final int count;
-    private final int[] extra;
+    @Nullable private final Object extra;
 
     private final boolean longDistance;
 
     public MessagePlayOutSpawnParticle(int particleId, Vector3f position, Vector3f offset, float data,
-            int count, int[] extra) {
+            int count, @Nullable Object extra) {
         this(particleId, position, offset, data, count, extra, true);
     }
 
     public MessagePlayOutSpawnParticle(int particleId, Vector3f position, Vector3f offset, float data,
-            int count, int[] extra, boolean longDistance) {
+            int count, @Nullable Object extra, boolean longDistance) {
         this.longDistance = longDistance;
         this.particleId = particleId;
         this.position = position;
@@ -77,7 +79,8 @@ public final class MessagePlayOutSpawnParticle implements Message {
         return this.count;
     }
 
-    public int[] getExtra() {
+    @Nullable
+    public Object getExtra() {
         return this.extra;
     }
 

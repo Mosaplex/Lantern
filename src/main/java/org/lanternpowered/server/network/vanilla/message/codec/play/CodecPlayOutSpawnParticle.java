@@ -27,10 +27,13 @@ package org.lanternpowered.server.network.vanilla.message.codec.play;
 
 import com.flowpowered.math.vector.Vector3f;
 import io.netty.handler.codec.CodecException;
+import io.netty.handler.codec.EncoderException;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
+import org.lanternpowered.server.network.buffer.objects.Types;
 import org.lanternpowered.server.network.message.codec.Codec;
 import org.lanternpowered.server.network.message.codec.CodecContext;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnParticle;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 public final class CodecPlayOutSpawnParticle implements Codec<MessagePlayOutSpawnParticle> {
 
@@ -38,22 +41,28 @@ public final class CodecPlayOutSpawnParticle implements Codec<MessagePlayOutSpaw
 
     @Override
     public ByteBuffer encode(CodecContext context, MessagePlayOutSpawnParticle message) throws CodecException {
-        Vector3f position = message.getPosition();
-        Vector3f offset = message.getOffset();
-        int[] extra = message.getExtra();
-        ByteBuffer buf = context.byteBufAlloc().buffer(BASE_LENGTH);
+        final ByteBuffer buf = context.byteBufAlloc().buffer(BASE_LENGTH);
         buf.writeInteger(message.getParticleId());
         buf.writeBoolean(message.isLongDistance());
+        final Vector3f position = message.getPosition();
         buf.writeFloat(position.getX());
         buf.writeFloat(position.getY());
         buf.writeFloat(position.getZ());
+        final Vector3f offset = message.getOffset();
         buf.writeFloat(offset.getX());
         buf.writeFloat(offset.getY());
         buf.writeFloat(offset.getZ());
         buf.writeFloat(message.getData());
         buf.writeInteger(message.getCount());
-        for (int value : extra) {
-            buf.writeVarInt(value);
+        final Object extra = message.getExtra();
+        if (extra != null) {
+            if (extra instanceof ItemStack) {
+                buf.write(Types.ITEM_STACK, (ItemStack) extra);
+            } else if (extra instanceof Integer) {
+                buf.writeVarInt((Integer) extra);
+            } else {
+                throw new EncoderException("Unsupported extra data type: " + extra.getClass().getName());
+            }
         }
         return buf;
     }

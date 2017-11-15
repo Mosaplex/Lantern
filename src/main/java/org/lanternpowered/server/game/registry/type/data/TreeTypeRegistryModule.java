@@ -26,11 +26,11 @@
 package org.lanternpowered.server.game.registry.type.data;
 
 import org.lanternpowered.server.data.type.LanternTreeType;
-import org.lanternpowered.server.game.registry.InternalEnumValueRegistryModule;
+import org.lanternpowered.server.game.registry.EnumValueRegistryModule;
 import org.spongepowered.api.data.type.TreeType;
 import org.spongepowered.api.data.type.TreeTypes;
 
-public class TreeTypeRegistryModule extends InternalEnumValueRegistryModule<TreeType> {
+public class TreeTypeRegistryModule extends EnumValueRegistryModule<TreeType> {
 
     private static final TreeTypeRegistryModule INSTANCE = new TreeTypeRegistryModule();
 

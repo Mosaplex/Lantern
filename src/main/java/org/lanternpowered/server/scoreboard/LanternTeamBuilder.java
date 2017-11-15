@@ -88,6 +88,7 @@ public class LanternTeamBuilder implements Team.Builder {
         return this;
     }
 
+    /*
     @Override
     public LanternTeamBuilder prefix(Text prefix) {
         final String legacyPrefix = LanternTexts.toLegacy(checkNotNull(prefix, "prefix"));
@@ -105,6 +106,7 @@ public class LanternTeamBuilder implements Team.Builder {
         this.suffix = checkNotNull(suffix, "suffix");
         return this;
     }
+    */
 
     @Override
     public LanternTeamBuilder allowFriendlyFire(boolean enabled) {
@@ -146,11 +148,11 @@ public class LanternTeamBuilder implements Team.Builder {
     public LanternTeamBuilder from(Team value) {
         this.name(value.getName())
                 .displayName(value.getDisplayName())
-                .prefix(value.getPrefix())
+                //.prefix(value.getPrefix())
                 .color(value.getColor())
                 .allowFriendlyFire(value.allowFriendlyFire())
                 .canSeeFriendlyInvisibles(value.canSeeFriendlyInvisibles())
-                .suffix(value.getSuffix())
+                //.suffix(value.getSuffix())
                 .nameTagVisibility(value.getNameTagVisibility())
                 .deathTextVisibility(value.getDeathMessageVisibility())
                 .members(value.getMembers());

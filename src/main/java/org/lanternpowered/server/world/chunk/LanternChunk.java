@@ -52,7 +52,6 @@ import org.lanternpowered.server.block.provider.CachedSimpleObjectProvider;
 import org.lanternpowered.server.block.provider.ConstantObjectProvider;
 import org.lanternpowered.server.block.provider.ObjectProvider;
 import org.lanternpowered.server.block.provider.SimpleObjectProvider;
-import org.lanternpowered.server.block.tile.ITileEntityRefreshBehavior;
 import org.lanternpowered.server.block.tile.LanternTileEntity;
 import org.lanternpowered.server.data.property.AbstractDirectionRelativePropertyHolder;
 import org.lanternpowered.server.data.property.AbstractPropertyHolder;
@@ -824,8 +823,8 @@ public class LanternChunk implements AbstractExtent, Chunk {
         }
     }
 
-    public short getType(Vector3i coordinates) {
-        return getType(coordinates.getX(), coordinates.getY(), coordinates.getZ());
+    public short getState(Vector3i coordinates) {
+        return getState(coordinates.getX(), coordinates.getY(), coordinates.getZ());
     }
 
     /**
@@ -836,7 +835,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
      * @param z the z coordinate
      * @return the block type
      */
-    public short getType(int x, int y, int z) {
+    public short getState(int x, int y, int z) {
         checkVolumeBounds(x, y, z);
         if (!this.loaded) {
             return 0;
@@ -863,15 +862,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
             return false;
         }
 
-        final short type = BlockRegistryModule.get().getStateInternalIdAndData(block);
-        final short type1;
-        // Air doesn't have metadata values
-        if (type >> 4 == 0 && type != 0) {
-            type1 = 0;
-        } else {
-            type1 = type;
-        }
-
+        final short state = (short) BlockRegistryModule.get().getStateInternalId(block);
         final BlockState[] changeData = new BlockState[1];
 
         final int rx = x & 0xf;
@@ -880,37 +871,37 @@ public class LanternChunk implements AbstractExtent, Chunk {
             if (section == null) {
                 // The section is already filled with air,
                 // so we can fail fast
-                if (type1 == 0) {
-                    return section;
+                if (state == 0) {
+                    return null;
                 }
                 // Create a new section
                 section = new ChunkSection();
             }
             final int index = ChunkSection.index(rx, y & 0xf, rz);
-            final short oldType = section.types[index];
-            if (oldType == type1) {
+            final short oldState = section.types[index];
+            if (oldState == state) {
                 return section;
             }
-            if (oldType != 0) {
-                short count = section.typesCountMap.get(oldType);
+            if (oldState != 0) {
+                short count = section.typesCountMap.get(oldState);
                 if (count > 0) {
                     if (--count <= 0) {
-                        section.typesCountMap.remove(oldType);
+                        section.typesCountMap.remove(oldState);
                     } else {
-                        section.typesCountMap.put(oldType, count);
+                        section.typesCountMap.put(oldState, count);
                     }
                 }
             }
-            if (type1 != 0) {
-                section.typesCountMap.put(type1, (short) (section.typesCountMap.get(type1) + 1));
-                if (oldType == 0) {
+            if (state != 0) {
+                section.typesCountMap.put(state, (short) (section.typesCountMap.get(state) + 1));
+                if (oldState == 0) {
                     section.nonAirCount++;
                 }
             } else {
                 section.nonAirCount--;
             }
-            final BlockState oldState = BlockRegistryModule.get().getStateByInternalIdAndData(oldType).get();
-            changeData[0] = oldState;
+            final BlockState oldBlockState = BlockRegistryModule.get().getStateByInternalId(oldState).get();
+            changeData[0] = oldBlockState;
             // The section is empty, destroy it
             if (section.nonAirCount <= 0) {
                 return null;
@@ -920,21 +911,9 @@ public class LanternChunk implements AbstractExtent, Chunk {
             boolean refresh = false;
             final Optional<TileEntityProvider> tileEntityProvider = ((LanternBlockType) block.getType()).getTileEntityProvider();
             if (tileEntity != null) {
-                if (oldType == 0 || type1 == 0) {
+                if (oldBlockState.getType() != block.getType()) {
+                    refresh = tileEntityProvider.isPresent();
                     remove = true;
-                } else if (tileEntity instanceof ITileEntityRefreshBehavior) {
-                    if (((ITileEntityRefreshBehavior) tileEntity).shouldRefresh(oldState, block)) {
-                        remove = true;
-                        refresh = true;
-                    }
-                } else if (oldType >> 4 != type1 >> 4) {
-                    // The default behavior will only refresh if the
-                    // block type is changed and not the block state
-                    remove = true;
-                    refresh = true;
-                }
-                if (refresh && !tileEntityProvider.isPresent()) {
-                    refresh = false;
                 }
             } else if (tileEntityProvider.isPresent()) {
                 refresh = true;
@@ -951,7 +930,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
             } else if (remove) {
                 section.tileEntities.remove((short) index);
             }
-            section.types[index] = type1;
+            section.types[index] = state;
             return section;
         });
 
@@ -959,10 +938,10 @@ public class LanternChunk implements AbstractExtent, Chunk {
         long stamp = this.heightMapLock.writeLock();
         try {
             // TODO: Check first and then use the write lock?
-            if (type != 0 && (this.heightMap[index] & 0xff) < y) {
+            if (state != 0 && (this.heightMap[index] & 0xff) < y) {
                 this.heightMap[index] = (byte) y;
                 this.heightMapUpdateFlags.clear(index);
-            } else if (type == 0 && (this.heightMap[index] & 0xff) == y) {
+            } else if (state == 0 && (this.heightMap[index] & 0xff) == y) {
                 this.heightMapUpdateFlags.set(index);
             }
         } finally {
@@ -1035,7 +1014,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
         final BlockState state = getBlock(x, y, z);
         final Location<World> loc = new Location<>(this.world, x, y, z);
         // TODO: Tile entity data
-        return new LanternBlockSnapshot(loc, state, ((LanternBlockType) state.getType()).getExtendedBlockStateProvider().get(state, loc, null),
+        return new LanternBlockSnapshot(loc, state,
                 getCreator(x, y, z), getNotifier(x, y, z), ImmutableMap.of());
     }
 
@@ -1530,7 +1509,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
 
     @Override
     public BlockState getBlock(int x, int y, int z) {
-        return BlockRegistryModule.get().getStateByInternalIdAndData(getType(x, y, z)).orElse(BlockTypes.AIR.getDefaultState());
+        return BlockRegistryModule.get().getStateByInternalId(getState(x, y, z)).orElse(BlockTypes.AIR.getDefaultState());
     }
 
     @Override

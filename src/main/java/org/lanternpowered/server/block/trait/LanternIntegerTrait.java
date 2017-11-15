@@ -34,12 +34,28 @@ import org.spongepowered.api.block.trait.IntegerTrait;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.mutable.Value;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
-public final class LanternIntegerTrait extends LanternBlockTrait<Integer> implements IntegerTrait {
+public final class LanternIntegerTrait<V> extends LanternBlockTrait<Integer, V> implements IntegerTrait {
 
-    private LanternIntegerTrait(String name, Key<? extends Value<Integer>> key, ImmutableSet<Integer> possibleValues) {
-        super(name, key, Integer.class, possibleValues);
+    private LanternIntegerTrait(String name, Key<? extends Value<V>> key, ImmutableSet<Integer> possibleValues,
+            @Nullable KeyTraitValueTransformer<Integer, V> keyTraitValueTransformer) {
+        super(name, key, Integer.class, possibleValues, keyTraitValueTransformer);
+    }
+
+    /**
+     * Creates a new integer trait with the specified name and the possible values.
+     *
+     * <p>The possible values array may not be empty.</p>
+     *
+     * @param name the name
+     * @param key the key that should be attached to the trait
+     * @param possibleValues the possible values
+     * @return the integer trait
+     */
+    public static LanternIntegerTrait<Integer> of(String name, Key<? extends Value<Integer>> key, int... possibleValues) {
+        return ofTransformed(name, key, null, possibleValues);
     }
 
     /**
@@ -49,19 +65,35 @@ public final class LanternIntegerTrait extends LanternBlockTrait<Integer> implem
      * 
      * @param name the name
      * @param key the key that should be attached to the trait
+     * @param keyTraitValueTransformer The key trait value transformer
      * @param possibleValues the possible values
      * @return the integer trait
      */
-    public static IntegerTrait of(String name, Key<? extends Value<Integer>> key, int... possibleValues) {
+    public static <V> LanternIntegerTrait<V> ofTransformed(String name, Key<? extends Value<V>> key,
+            @Nullable KeyTraitValueTransformer<Integer, V> keyTraitValueTransformer, int... possibleValues) {
         checkNotNullOrEmpty(name, "name");
         checkNotNull(possibleValues, "possibleValues");
         checkNotNull(key, "key");
         checkState(possibleValues.length != 0, "possibleValues may not be empty");
-        ImmutableSet.Builder<Integer> builder = ImmutableSet.builder();
+        final ImmutableSet.Builder<Integer> builder = ImmutableSet.builder();
         for (int possibleValue : possibleValues) {
             builder.add(possibleValue);
         }
-        return new LanternIntegerTrait(name, key, builder.build());
+        return new LanternIntegerTrait<>(name, key, builder.build(), keyTraitValueTransformer);
+    }
+
+    /**
+     * Creates a new integer trait with the specified name and the possible values.
+     *
+     * <p>The possible values array may not be empty.</p>
+     *
+     * @param name the name
+     * @param key the key that should be attached to the trait
+     * @param possibleValues the possible values
+     * @return the integer trait
+     */
+    public static <V> LanternIntegerTrait<V> of(String name, Key<? extends Value<V>> key, Iterable<Integer> possibleValues) {
+        return ofTransformed(name, key, null, possibleValues);
     }
 
     /**
@@ -71,15 +103,34 @@ public final class LanternIntegerTrait extends LanternBlockTrait<Integer> implem
      * 
      * @param name the name
      * @param key the key that should be attached to the trait
+     * @param keyTraitValueTransformer The key trait value transformer
      * @param possibleValues the possible values
      * @return the integer trait
      */
-    public static IntegerTrait of(String name, Key<? extends Value<Integer>> key, Iterable<Integer> possibleValues) {
+    public static <V> LanternIntegerTrait<V> ofTransformed(String name, Key<? extends Value<V>> key,
+            @Nullable KeyTraitValueTransformer<Integer, V> keyTraitValueTransformer, Iterable<Integer> possibleValues) {
         checkNotNullOrEmpty(name, "name");
         checkNotNull(possibleValues, "possibleValues");
         checkNotNull(key, "key");
         checkState(possibleValues.iterator().hasNext(), "possibleValues may not be empty");
-        return new LanternIntegerTrait(name, key, ImmutableSet.copyOf(possibleValues));
+        return new LanternIntegerTrait<>(name, key, ImmutableSet.copyOf(possibleValues), keyTraitValueTransformer);
+    }
+
+    /**
+     * Creates a new integer trait with the specified name and the values between
+     * the minimum (inclusive) and the maximum (exclusive) value.
+     *
+     * <p>The difference between the minimum and the maximum value must
+     * be greater then zero.</p>
+     *
+     * @param name the name
+     * @param key the key that should be attached to the trait
+     * @param min the minimum value
+     * @param max the maximum value
+     * @return the integer trait
+     */
+    public static LanternIntegerTrait<Integer> ofRange(String name, Key<? extends Value<Integer>> key, int min, int max) {
+        return ofRangeTransformed(name, key, null, min, max);
     }
 
     /**
@@ -91,19 +142,21 @@ public final class LanternIntegerTrait extends LanternBlockTrait<Integer> implem
      * 
      * @param name the name
      * @param key the key that should be attached to the trait
+     * @param keyTraitValueTransformer The key trait value transformer
      * @param min the minimum value
      * @param max the maximum value
      * @return the integer trait
      */
-    public static IntegerTrait ofRange(String name, Key<? extends Value<Integer>> key, int min, int max) {
+    public static <V> LanternIntegerTrait<V> ofRangeTransformed(String name, Key<? extends Value<V>> key,
+            @Nullable KeyTraitValueTransformer<Integer, V> keyTraitValueTransformer, int min, int max) {
         checkNotNullOrEmpty(name, "name");
         checkNotNull(key, "key");
         checkState(max - min > 0, "difference between min and max must be greater then zero");
-        ImmutableSet.Builder<Integer> set = ImmutableSet.builder();
+        final ImmutableSet.Builder<Integer> set = ImmutableSet.builder();
         for (int i = min; i <= max; i++) {
             set.add(i);
         }
-        return new LanternIntegerTrait(name, key, set.build());
+        return new LanternIntegerTrait<>(name, key, set.build(), keyTraitValueTransformer);
     }
 
     @Override

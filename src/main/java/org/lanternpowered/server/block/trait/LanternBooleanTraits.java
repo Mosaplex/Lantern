@@ -41,8 +41,6 @@ public final class LanternBooleanTraits {
 
     public static final BooleanTrait OCCUPIED = LanternBooleanTrait.of("occupied", Keys.OCCUPIED);
 
-    public static final BooleanTrait SEAMLESS = LanternBooleanTrait.of("seamless", Keys.SEAMLESS);
-
     public static final BooleanTrait ENABLED = LanternBooleanTrait.of("enabled", LanternKeys.ENABLED);
 
     public static final BooleanTrait TRIGGERED = LanternBooleanTrait.of("triggered", LanternKeys.TRIGGERED);
@@ -52,4 +50,6 @@ public final class LanternBooleanTraits {
     public static final BooleanTrait EXPLODE = LanternBooleanTrait.of("explode", LanternKeys.EXPLODE);
 
     public static final BooleanTrait HAS_RECORD = LanternBooleanTrait.of("has_record", LanternKeys.HAS_RECORD);
+
+    public static final BooleanTrait LIT = LanternBooleanTrait.of("lit", Keys.LIT);
 }

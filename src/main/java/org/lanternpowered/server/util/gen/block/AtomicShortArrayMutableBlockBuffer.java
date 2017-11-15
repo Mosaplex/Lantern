@@ -52,7 +52,7 @@ public class AtomicShortArrayMutableBlockBuffer extends AbstractMutableBlockBuff
     @Override
     public boolean setBlock(int x, int y, int z, BlockState block) {
         checkRange(x, y, z);
-        this.blocks.set(index(x, y, z), BlockRegistryModule.get().getStateInternalIdAndData(block));
+        this.blocks.set(index(x, y, z), (short) BlockRegistryModule.get().getStateInternalId(block));
         return true;
     }
 
@@ -60,7 +60,7 @@ public class AtomicShortArrayMutableBlockBuffer extends AbstractMutableBlockBuff
     public BlockState getBlock(int x, int y, int z) {
         checkRange(x, y, z);
         final short blockState = this.blocks.get(index(x, y, z));
-        final BlockState block = BlockRegistryModule.get().getStateByInternalIdAndData(blockState).orElse(BlockTypes.AIR.getDefaultState());
+        final BlockState block = BlockRegistryModule.get().getStateByInternalId(blockState).orElse(null);
         return block == null ? this.air : block;
     }
 

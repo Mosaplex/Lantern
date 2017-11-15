@@ -38,7 +38,7 @@ import org.lanternpowered.server.network.buffer.objects.Types;
 import org.lanternpowered.server.network.message.Message;
 import org.lanternpowered.server.network.message.NullMessage;
 import org.lanternpowered.server.network.message.codec.CodecContext;
-import org.lanternpowered.server.network.objects.RawItemStack;
+import org.lanternpowered.server.network.item.RawItemStack;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInAcceptBeaconEffects;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInChangeItemName;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInChangeOffer;
@@ -49,7 +49,6 @@ import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayIn
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInPickItem;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInSignBook;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutOpenBook;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutStopSounds;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.potion.PotionEffectType;
@@ -66,12 +65,6 @@ public final class CodecPlayInOutCustomPayload extends AbstractCodecPlayInOutCus
             final ByteBuffer buf = context.byteBufAlloc().buffer();
             buf.writeVarInt(((MessagePlayOutOpenBook) message).getHandType() == HandTypes.MAIN_HAND ? 0 : 1);
             return new MessageResult("MC|BOpen", buf);
-        } else if (message instanceof MessagePlayOutStopSounds) {
-            final MessagePlayOutStopSounds message0 = (MessagePlayOutStopSounds) message;
-            final ByteBuffer buf = context.byteBufAlloc().buffer();
-            buf.writeString(message0.getCategory() == null ? "" : message0.getCategory().getName());
-            buf.writeString(message0.getSound() == null ? "" : message0.getSound());
-            return new MessageResult("MC|StopSound", buf);
         }
         throw new EncoderException("Unsupported message type: " + message);
     }

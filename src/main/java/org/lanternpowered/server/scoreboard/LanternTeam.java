@@ -55,9 +55,9 @@ public class LanternTeam implements Team {
     @Nullable private LanternScoreboard scoreboard;
     private TextColor color;
     final Set<Text> members = new HashSet<>();
-    private Text prefix;
+    //private Text prefix;
     private String legacyPrefix;
-    private Text suffix;
+    //private Text suffix;
     private String legacySuffix;
     private Text displayName;
     private String legacyDisplayName;
@@ -72,9 +72,9 @@ public class LanternTeam implements Team {
                 Visibility deathMessageVisibility, CollisionRule collisionRule) {
         this.displayName = displayName;
         this.legacyDisplayName = LanternTexts.toLegacy(displayName);
-        this.prefix = prefix;
+        //this.prefix = prefix;
         this.legacyPrefix = LanternTexts.toLegacy(prefix);
-        this.suffix = suffix;
+        //this.suffix = suffix;
         this.legacySuffix = LanternTexts.toLegacy(suffix);
         this.name = name;
         this.color = color;
@@ -165,6 +165,7 @@ public class LanternTeam implements Team {
         return this.legacyPrefix;
     }
 
+    /*
     @Override
     public Text getPrefix() {
         return this.prefix;
@@ -182,11 +183,13 @@ public class LanternTeam implements Team {
             this.sendUpdate();
         }
     }
+    */
 
     public String getLegacySuffix() {
         return this.legacySuffix;
     }
 
+    /*
     @Override
     public Text getSuffix() {
         return this.suffix;
@@ -204,6 +207,7 @@ public class LanternTeam implements Team {
             this.sendUpdate();
         }
     }
+    */
 
     @Override
     public boolean allowFriendlyFire() {

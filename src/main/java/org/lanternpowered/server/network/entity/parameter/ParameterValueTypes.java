@@ -27,7 +27,6 @@ package org.lanternpowered.server.network.entity.parameter;
 
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
-import com.google.common.base.Throwables;
 import org.lanternpowered.server.data.persistence.nbt.NbtStreamUtils;
 import org.lanternpowered.server.game.registry.type.block.BlockRegistryModule;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
@@ -71,7 +70,7 @@ public final class ParameterValueTypes {
         }
     });
     public static final ParameterValueType<Optional<BlockState>> OPTIONAL_BLOCK_STATE = new ParameterValueType<>((buf, value) ->
-            buf.writeVarInt(value.map(v -> BlockRegistryModule.get().getStateInternalId(v)).orElse((short) 0)));
+            buf.writeVarInt(value.map(v -> BlockRegistryModule.get().getStateInternalId(v)).orElse(0)));
     public static final ParameterValueType<Optional<DataView>> NBT_TAG = new ParameterValueType<>((buf, value) -> {
         if (value.isPresent()) {
             try {

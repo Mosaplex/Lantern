@@ -25,11 +25,10 @@
  */
 package org.lanternpowered.server.data.type;
 
-import org.lanternpowered.server.catalog.InternalCatalogType;
 import org.lanternpowered.server.catalog.SimpleCatalogType;
 import org.spongepowered.api.data.type.RailDirection;
 
-public enum LanternRailDirection implements SimpleCatalogType, RailDirection, InternalCatalogType {
+public enum LanternRailDirection implements SimpleCatalogType, RailDirection {
 
     NORTH_SOUTH         ("north_south"),
     EAST_WEST           ("east_west"),
@@ -58,11 +57,6 @@ public enum LanternRailDirection implements SimpleCatalogType, RailDirection, In
     @Override
     public String getId() {
         return this.id;
-    }
-
-    @Override
-    public int getInternalId() {
-        return ordinal();
     }
 
     static {

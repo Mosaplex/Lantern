@@ -33,14 +33,10 @@ import com.github.benmanes.caffeine.cache.RemovalCause;
 import io.netty.handler.codec.CodecException;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.lanternpowered.server.data.io.store.ObjectStore;
-import org.lanternpowered.server.data.io.store.ObjectStoreRegistry;
-import org.lanternpowered.server.data.io.store.item.ItemStackStore;
 import org.lanternpowered.server.data.type.LanternNotePitch;
 import org.lanternpowered.server.effect.particle.LanternParticleEffect;
 import org.lanternpowered.server.effect.particle.LanternParticleType;
 import org.lanternpowered.server.game.registry.type.block.BlockRegistryModule;
-import org.lanternpowered.server.game.registry.type.item.ItemRegistryModule;
 import org.lanternpowered.server.inventory.LanternItemStack;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 import org.lanternpowered.server.network.buffer.ByteBufferAllocator;
@@ -59,8 +55,6 @@ import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOu
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnParticle;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.NotePitch;
@@ -85,6 +79,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
+@SuppressWarnings("unchecked")
 public final class ProcessorPlayOutParticleEffect implements Processor<MessagePlayOutParticleEffect> {
 
     /**
@@ -118,7 +113,7 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
     private static int getBlockState(LanternParticleEffect effect, Optional<BlockState> defaultBlockState) {
         final Optional<BlockState> blockState = effect.getOption(ParticleOptions.BLOCK_STATE);
         if (blockState.isPresent()) {
-            return BlockRegistryModule.get().getStateInternalIdAndData(blockState.get());
+            return BlockRegistryModule.get().getStateInternalId(blockState.get());
         } else {
             final Optional<ItemStackSnapshot> optSnapshot = effect.getOption(ParticleOptions.ITEM_STACK_SNAPSHOT);
             if (optSnapshot.isPresent()) {
@@ -130,16 +125,15 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
                         state = blockType.get().getDefaultState();
                     } else {
                         final BlockState.Builder builder = BlockState.builder().blockType(blockType.get());
-                        //noinspection unchecked
                         snapshot.getValues().forEach(value -> builder.add((Key) value.getKey(), value.get()));
                         state = builder.build();
                     }
-                    return BlockRegistryModule.get().getStateInternalIdAndData(state);
+                    return BlockRegistryModule.get().getStateInternalId(state);
                 } else {
                     return 0;
                 }
             } else {
-                return BlockRegistryModule.get().getStateInternalIdAndData(defaultBlockState.get());
+                return BlockRegistryModule.get().getStateInternalId(defaultBlockState.get());
             }
         }
     }
@@ -178,15 +172,6 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
         }
     }
 
-    private static int[] toExtraItemData(ItemStack itemStack) {
-        final ObjectStore<LanternItemStack> store = ObjectStoreRegistry.get().get(LanternItemStack.class).get();
-        final DataContainer view = DataContainer.createNew(DataView.SafetyMode.NO_DATA_CLONED);
-        store.serialize((LanternItemStack) itemStack, view);
-        final int data = view.getInt(ItemStackStore.DATA).get();
-        final int internalId = ItemRegistryModule.get().getInternalId(itemStack.getType());
-        return new int[] { internalId, data };
-    }
-
     private ICachedMessage preProcess(ParticleEffect effect0) {
         final LanternParticleEffect effect = (LanternParticleEffect) effect0;
         final LanternParticleType type = effect.getType();
@@ -196,7 +181,7 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
         if (!internalType.isPresent()) {
             if (type == ParticleTypes.FIREWORKS) {
                 // Create the fireworks data item
-                final LanternItemStack itemStack = new LanternItemStack(ItemTypes.FIREWORKS);
+                final LanternItemStack itemStack = new LanternItemStack(ItemTypes.FIREWORK_ROCKET);
                 itemStack.tryOffer(Keys.FIREWORK_EFFECTS, effect.getOptionOrDefault(ParticleOptions.FIREWORK_EFFECTS).get());
 
                 // Write the item to a parameter list
@@ -233,7 +218,7 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
         final Vector3f offset = effect.getOption(ParticleOptions.OFFSET).map(Vector3d::toFloat).orElse(Vector3f.ZERO);
         final int quantity = effect.getOption(ParticleOptions.QUANTITY).orElse(1);
 
-        int[] extra = null;
+        Object extra = null;
 
         // The extra values, normal behavior offsetX, offsetY, offsetZ
         double f0 = 0f;
@@ -249,33 +234,29 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
             if (state == 0) {
                 return EmptyCachedMessage.INSTANCE;
             }
-            extra = new int[] { state };
+            extra = state;
         }
 
         final Optional<ItemStackSnapshot> defaultItemStackSnapshot;
         if (extra == null && (defaultItemStackSnapshot = type.getDefaultOption(ParticleOptions.ITEM_STACK_SNAPSHOT)).isPresent()) {
             final Optional<ItemStackSnapshot> optItemStackSnapshot = effect.getOption(ParticleOptions.ITEM_STACK_SNAPSHOT);
             if (optItemStackSnapshot.isPresent()) {
-                extra = toExtraItemData(optItemStackSnapshot.get().createStack());
+                extra = optItemStackSnapshot.get().createStack();
             } else {
                 final Optional<BlockState> optBlockState = effect.getOption(ParticleOptions.BLOCK_STATE);
                 if (optBlockState.isPresent()) {
                     final BlockState blockState = optBlockState.get();
                     final Optional<ItemType> optItemType = blockState.getType().getItem();
                     if (optItemType.isPresent()) {
-                        // TODO: Item damage value
-                        extra = new int[] { ItemRegistryModule.get().getInternalId(optItemType.get()), 0};
+                        // TODO: Damage/state values
+                        extra = ItemStack.of(optItemType.get(), 1);
                     } else {
                         return EmptyCachedMessage.INSTANCE;
                     }
                 } else {
-                    extra = toExtraItemData(defaultItemStackSnapshot.get().createStack());
+                    extra = defaultItemStackSnapshot.get().createStack();
                 }
             }
-        }
-
-        if (extra == null) {
-            extra = new int[0];
         }
 
         final Optional<Double> defaultScale = type.getDefaultOption(ParticleOptions.SCALE);
@@ -419,9 +400,9 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
         private final int particleId;
         private final Vector3f offsetData;
         private final int count;
-        private final int[] extra;
+        @Nullable private final Object extra;
 
-        private CachedParticleMessage(int particleId, Vector3f offsetData, int count, int[] extra) {
+        private CachedParticleMessage(int particleId, Vector3f offsetData, int count, @Nullable Object extra) {
             this.particleId = particleId;
             this.offsetData = offsetData;
             this.count = count;
@@ -441,9 +422,9 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
         private final Vector3f offsetData;
         private final Vector3f offset;
         private final int count;
-        private final int[] extra;
+        @Nullable private final Object extra;
 
-        private CachedOffsetParticleMessage(int particleId, Vector3f offsetData, Vector3f offset, int count, int[] extra) {
+        private CachedOffsetParticleMessage(int particleId, Vector3f offsetData, Vector3f offset, int count, @Nullable Object extra) {
             this.particleId = particleId;
             this.offsetData = offsetData;
             this.offset = offset;

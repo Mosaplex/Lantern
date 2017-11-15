@@ -173,8 +173,8 @@ public class ScoreboardIO {
                     .canSeeFriendlyInvisibles(entry.getInt(CAN_SEE_FRIENDLY_INVISIBLES).orElse(0) > 0)
                     .name(entry.getString(NAME).get())
                     .displayName(LanternTexts.fromLegacy(entry.getString(DISPLAY_NAME).get()))
-                    .prefix(LanternTexts.fromLegacy(entry.getString(PREFIX).get()))
-                    .suffix(LanternTexts.fromLegacy(entry.getString(SUFFIX).get()))
+                    //.prefix(LanternTexts.fromLegacy(entry.getString(PREFIX).get()))
+                    //.suffix(LanternTexts.fromLegacy(entry.getString(SUFFIX).get()))
                     .members(entry.getStringList(MEMBERS).get().stream().map(LanternTexts::fromLegacy).collect(Collectors.toSet()));
             entry.getString(NAME_TAG_VISIBILITY).ifPresent(value -> builder.nameTagVisibility(Sponge.getRegistry().getAllOf(Visibility.class)
                     .stream().filter(visibility -> visibility.getName().equals(value)).findFirst().orElseGet(() -> {

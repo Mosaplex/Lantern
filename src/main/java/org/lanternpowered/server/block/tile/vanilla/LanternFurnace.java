@@ -26,9 +26,8 @@
 package org.lanternpowered.server.block.tile.vanilla;
 
 import org.lanternpowered.server.block.tile.ITileEntityCarrier;
-import org.lanternpowered.server.block.tile.ITileEntityRefreshBehavior;
 import org.lanternpowered.server.block.tile.LanternTileEntity;
-import org.lanternpowered.server.block.trait.LanternEnumTraits;
+import org.lanternpowered.server.block.trait.LanternBooleanTraits;
 import org.lanternpowered.server.data.ValueCollection;
 import org.lanternpowered.server.data.element.ElementListener;
 import org.lanternpowered.server.game.Lantern;
@@ -40,7 +39,6 @@ import org.lanternpowered.server.item.recipe.IIngredient;
 import org.lanternpowered.server.item.recipe.fuel.IFuel;
 import org.lanternpowered.server.item.recipe.smelting.ISmeltingRecipe;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.carrier.Furnace;
 import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
@@ -56,7 +54,7 @@ import org.spongepowered.api.util.Direction;
 import java.util.Optional;
 import java.util.OptionalInt;
 
-public class LanternFurnace extends LanternTileEntity implements Furnace, ITileEntityRefreshBehavior, ITileEntityCarrier {
+public class LanternFurnace extends LanternTileEntity implements Furnace, ITileEntityCarrier {
 
     // The inventory of the furnace
     private final FurnaceInventory inventory;
@@ -86,15 +84,7 @@ public class LanternFurnace extends LanternTileEntity implements Furnace, ITileE
     @Override
     public BlockState getBlock() {
         final BlockState block = getLocation().getBlock();
-        return block.getType() == BlockTypes.FURNACE || block.getType() == BlockTypes.LIT_FURNACE ? block :
-                BlockTypes.FURNACE.getDefaultState();
-    }
-
-    @Override
-    public boolean shouldRefresh(BlockState oldBlockState, BlockState newBlockState) {
-        final BlockType n = oldBlockState.getType();
-        final BlockType o = newBlockState.getType();
-        return !((n == BlockTypes.FURNACE || n == BlockTypes.LIT_FURNACE) && (o == BlockTypes.FURNACE || o == BlockTypes.LIT_FURNACE));
+        return block.getType() == BlockTypes.FURNACE ? block : BlockTypes.FURNACE.getDefaultState();
     }
 
     @Override
@@ -241,13 +231,10 @@ public class LanternFurnace extends LanternTileEntity implements Furnace, ITileE
         BlockState blockState = getLocation().getBlock();
 
         final boolean burning = get(Keys.PASSED_BURN_TIME).get() < get(Keys.MAX_BURN_TIME).get();
-        final boolean blockBurning = blockState.getType() == BlockTypes.LIT_FURNACE;
+        final boolean blockBurning = blockState.getTraitValue(LanternBooleanTraits.LIT).get();
 
         if (burning != blockBurning) {
-            blockState = (burning ? BlockTypes.LIT_FURNACE : BlockTypes.FURNACE).getDefaultState()
-                    .withTrait(LanternEnumTraits.HORIZONTAL_FACING, blockState
-                            .getTraitValue(LanternEnumTraits.HORIZONTAL_FACING).get()).get();
-            getLocation().setBlock(blockState);
+            getLocation().setBlock(blockState.withTrait(LanternBooleanTraits.LIT, burning).get());
         }
     }
 

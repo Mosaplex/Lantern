@@ -25,10 +25,9 @@
  */
 package org.lanternpowered.server.data.type;
 
-import org.lanternpowered.server.catalog.InternalCatalogType;
 import org.lanternpowered.server.catalog.SimpleCatalogType;
 
-public enum LanternBedPart implements SimpleCatalogType, InternalCatalogType {
+public enum LanternBedPart implements SimpleCatalogType {
 
     FOOT        ("foot"),
     HEAD        ("head"),
@@ -43,10 +42,5 @@ public enum LanternBedPart implements SimpleCatalogType, InternalCatalogType {
     @Override
     public String getId() {
         return this.identifier;
-    }
-
-    @Override
-    public int getInternalId() {
-        return ordinal();
     }
 }

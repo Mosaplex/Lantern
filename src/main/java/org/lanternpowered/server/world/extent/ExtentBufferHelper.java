@@ -84,7 +84,7 @@ public final class ExtentBufferHelper {
         for (int x = min.getX(); x <= max.getX(); x++) {
             for (int z = min.getZ(); z <= max.getZ(); z++) {
                 for (int y = min.getY(); y <= max.getY(); y++) {
-                    copy[i++] = BlockRegistryModule.get().getStateInternalIdAndData(volume.getBlock(x, y, z));
+                    copy[i++] = (short) BlockRegistryModule.get().getStateInternalId(volume.getBlock(x, y, z));
                 }
             }
         }

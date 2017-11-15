@@ -694,5 +694,49 @@
     {
         "version": 340,
         "name": "1.12.2"
+    },
+    {
+        "version": 341,
+        "name": "17w43a"
+    },
+    {
+        "version": 342,
+        "name": "17w43b"
+    },
+    {
+        "version": 343,
+        "name": "17w45a"
+    },
+    {
+        "version": 344,
+        "name": "17w45b"
+    },
+    {
+        "version": 345,
+        "name": "17w46a"
+    },
+    {
+        "version": 346,
+        "name": "17w47a"
+    },
+    {
+        "version": 347,
+        "name": "17w47b"
+    },
+    {
+        "version": 348,
+        "name": "17w48a"
+    },
+    {
+        "version": 349,
+        "name": "17w49a"
+    },
+    {
+        "version": 350,
+        "name": "17w49b"
+    },
+    {
+        "version": 351,
+        "name": "17w50a"
     }
 ]

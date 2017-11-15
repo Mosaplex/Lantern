@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.lanternpowered.server.util.Conditions.checkNotNullOrEmpty;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import org.spongepowered.api.block.trait.EnumTrait;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.mutable.Value;
@@ -38,10 +38,10 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unchecked")
-public final class LanternEnumTrait<E extends Enum<E>> extends LanternBlockTrait<E> implements EnumTrait<E> {
+public final class LanternEnumTrait<E extends Enum<E>> extends LanternBlockTrait<E, E> implements EnumTrait<E> {
 
-    private LanternEnumTrait(String name, Class<E> valueClass, Key<? extends Value<E>> key, ImmutableSet<E> possibleValues) {
-        super(name, key, valueClass, possibleValues);
+    private LanternEnumTrait(String name, Class<E> valueClass, Key<? extends Value<E>> key, ImmutableList<E> possibleValues) {
+        super(name, key, valueClass, possibleValues, null);
     }
 
     /**
@@ -60,7 +60,7 @@ public final class LanternEnumTrait<E extends Enum<E>> extends LanternBlockTrait
         checkNotNull(key, "key");
         checkState(possibleValues.iterator().hasNext(), "possibleValues may not be empty");
         return new LanternEnumTrait<>(name, (Class<E>) possibleValues.iterator().getClass(),
-                key, ImmutableSet.copyOf(possibleValues));
+                key, ImmutableList.copyOf(possibleValues));
     }
 
     /**
@@ -78,7 +78,7 @@ public final class LanternEnumTrait<E extends Enum<E>> extends LanternBlockTrait
         checkNotNull(enumClass, "enumClass");
         checkNotNull(key, "key");
         checkState(enumClass.getEnumConstants().length != 0, "enumClass must contain values");
-        return new LanternEnumTrait<>(name, enumClass, key, ImmutableSet.copyOf(enumClass.getEnumConstants()));
+        return new LanternEnumTrait<>(name, enumClass, key, ImmutableList.copyOf(enumClass.getEnumConstants()));
     }
 
     /**
@@ -98,8 +98,8 @@ public final class LanternEnumTrait<E extends Enum<E>> extends LanternBlockTrait
         checkNotNull(enumClass, "enumClass");
         checkNotNull(key, "key");
         checkState(enumClass.getEnumConstants().length != 0, "enumClass must contain values");
-        return new LanternEnumTrait<>(name, enumClass, key, ImmutableSet.copyOf(enumClass.getEnumConstants())
-                .stream().filter(predicate).collect(ImmutableSet.toImmutableSet()));
+        return new LanternEnumTrait<>(name, enumClass, key, Arrays.stream(enumClass.getEnumConstants())
+                .filter(predicate).collect(ImmutableList.toImmutableList()));
     }
 
     /**
@@ -121,7 +121,7 @@ public final class LanternEnumTrait<E extends Enum<E>> extends LanternBlockTrait
         checkNotNull(key, "key");
         checkState(values.length != 0, "enumClass must contain values");
         return new LanternEnumTrait<>(name, (Class) value.getClass(), key,
-                ImmutableSet.<E>builder().add(value).add(values).build());
+                ImmutableList.<E>builder().add(value).add(values).build());
     }
 
     @Override

@@ -25,14 +25,13 @@
  */
 package org.lanternpowered.server.data.type;
 
-import org.lanternpowered.server.catalog.InternalCatalogType;
 import org.lanternpowered.server.catalog.SimpleCatalogType;
 import org.spongepowered.api.data.type.PortionType;
 
-public enum LanternPortionType implements PortionType, SimpleCatalogType, InternalCatalogType {
+public enum LanternPortionType implements PortionType, SimpleCatalogType {
 
-    BOTTOM        ("bottom"),
     TOP           ("top"),
+    BOTTOM        ("bottom"),
     ;
 
     private final String identifier;
@@ -45,10 +44,4 @@ public enum LanternPortionType implements PortionType, SimpleCatalogType, Intern
     public String getId() {
         return this.identifier;
     }
-
-    @Override
-    public int getInternalId() {
-        return ordinal();
-    }
-
 }
