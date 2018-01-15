@@ -55,10 +55,10 @@ public abstract class MessagePlayOutTeams implements Message {
 
         private final List<String> players;
 
-        public Create(String teamName, String displayName, String prefix, String suffix, Visibility nameTagVisibility,
+        public Create(String teamName, String displayName, Visibility nameTagVisibility,
                 CollisionRule collisionRule,  TextColor color, boolean friendlyFire, boolean seeFriendlyInvisibles,
                 List<String> players) {
-            super(teamName, displayName, prefix, suffix, nameTagVisibility, collisionRule, color, friendlyFire, seeFriendlyInvisibles);
+            super(teamName, displayName, nameTagVisibility, collisionRule, color, friendlyFire, seeFriendlyInvisibles);
             this.players = players;
         }
 
@@ -70,29 +70,25 @@ public abstract class MessagePlayOutTeams implements Message {
 
     public static final class Update extends CreateOrUpdate {
 
-        public Update(String teamName, String displayName, String prefix, String suffix, Visibility nameTagVisibility,
+        public Update(String teamName, String displayName, Visibility nameTagVisibility,
                 CollisionRule collisionRule,  TextColor color, boolean friendlyFire, boolean seeFriendlyInvisibles) {
-            super(teamName, displayName, prefix, suffix, nameTagVisibility, collisionRule, color, friendlyFire, seeFriendlyInvisibles);
+            super(teamName, displayName, nameTagVisibility, collisionRule, color, friendlyFire, seeFriendlyInvisibles);
         }
     }
 
     public static abstract class CreateOrUpdate extends MessagePlayOutTeams {
 
         private final String displayName;
-        private final String prefix;
-        private final String suffix;
         private final Visibility nameTagVisibility;
         private final CollisionRule collisionRule;
         private final TextColor color;
         private final boolean friendlyFire;
         private final boolean seeFriendlyInvisibles;
 
-        CreateOrUpdate(String teamName, String displayName, String prefix, String suffix, Visibility nameTagVisibility,
+        CreateOrUpdate(String teamName, String displayName, Visibility nameTagVisibility,
                 CollisionRule collisionRule, TextColor color, boolean friendlyFire, boolean seeFriendlyInvisibles) {
             super(teamName);
             this.displayName = displayName;
-            this.prefix = prefix;
-            this.suffix = suffix;
             this.nameTagVisibility = nameTagVisibility;
             this.collisionRule = collisionRule;
             this.color = color;
@@ -102,14 +98,6 @@ public abstract class MessagePlayOutTeams implements Message {
 
         public String getDisplayName() {
             return this.displayName;
-        }
-
-        public String getPrefix() {
-            return this.prefix;
-        }
-
-        public String getSuffix() {
-            return this.suffix;
         }
 
         public Visibility getNameTagVisibility() {

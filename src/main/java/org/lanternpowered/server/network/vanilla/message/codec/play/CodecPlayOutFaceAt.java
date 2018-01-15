@@ -23,37 +23,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.type;
+package org.lanternpowered.server.network.vanilla.message.codec.play;
 
-import com.google.common.base.MoreObjects;
-import org.lanternpowered.server.catalog.PluginCatalogType;
-import org.spongepowered.api.data.type.Art;
+import com.flowpowered.math.vector.Vector3d;
+import io.netty.handler.codec.CodecException;
+import org.lanternpowered.server.network.buffer.ByteBuffer;
+import org.lanternpowered.server.network.message.codec.Codec;
+import org.lanternpowered.server.network.message.codec.CodecContext;
+import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutFaceAt;
 
-public class LanternArt extends PluginCatalogType.Base.Internal implements Art {
-
-    private final int width;
-    private final int height;
-
-    public LanternArt(String pluginId, String id, String name, int internalId, int width, int height) {
-        super(pluginId, id, name, internalId);
-        this.width = width;
-        this.height = height;
-    }
+public final class CodecPlayOutFaceAt implements Codec<MessagePlayOutFaceAt> {
 
     @Override
-    public int getHeight() {
-        return this.height;
-    }
-
-    @Override
-    public int getWidth() {
-        return this.width;
-    }
-
-    @Override
-    protected MoreObjects.ToStringHelper toStringHelper() {
-        return super.toStringHelper()
-                .add("width", this.width)
-                .add("height", this.height);
+    public ByteBuffer encode(CodecContext context, MessagePlayOutFaceAt message) throws CodecException {
+        final ByteBuffer buf = context.byteBufAlloc().buffer();
+        buf.writeVarInt(message.getSourceBodyPosition().ordinal());
+        final Vector3d pos = message.getPosition();
+        buf.writeDouble(pos.getX());
+        buf.writeDouble(pos.getY());
+        buf.writeDouble(pos.getZ());
+        final boolean flag = message instanceof MessagePlayOutFaceAt.Entity;
+        buf.writeBoolean(flag);
+        if (flag) {
+            final MessagePlayOutFaceAt.Entity message1 = (MessagePlayOutFaceAt.Entity) message;
+            buf.writeVarInt(message1.getEntityId());
+            buf.writeVarInt(message1.getEntityBodyPosition().ordinal());
+        }
+        return buf;
     }
 }

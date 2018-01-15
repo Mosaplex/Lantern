@@ -86,6 +86,7 @@ import org.lanternpowered.server.network.vanilla.message.codec.play.CodecPlayOut
 import org.lanternpowered.server.network.vanilla.message.codec.play.CodecPlayOutEntityStatus;
 import org.lanternpowered.server.network.vanilla.message.codec.play.CodecPlayOutEntityTeleport;
 import org.lanternpowered.server.network.vanilla.message.codec.play.CodecPlayOutEntityVelocity;
+import org.lanternpowered.server.network.vanilla.message.codec.play.CodecPlayOutFaceAt;
 import org.lanternpowered.server.network.vanilla.message.codec.play.CodecPlayOutMultiBlockChange;
 import org.lanternpowered.server.network.vanilla.message.codec.play.CodecPlayOutNamedSoundEffect;
 import org.lanternpowered.server.network.vanilla.message.codec.play.CodecPlayOutOpenSign;
@@ -244,6 +245,7 @@ import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOu
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityStatus;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityTeleport;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityVelocity;
+import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutFaceAt;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutMultiBlockChange;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutNamedSoundEffect;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutOpenBook;
@@ -499,6 +501,10 @@ final class ProtocolPlay extends ProtocolBase {
         outbound.bind(CodecPlayOutPlayerAbilities.class, MessagePlayOutPlayerAbilities.class);
         outbound.bind(); // TODO: Combat Event
         outbound.bind(CodecPlayOutTabListEntries.class, MessagePlayOutTabListEntries.class);
+        final CodecRegistration<MessagePlayOutFaceAt, CodecPlayOutFaceAt> codecPlayOutFaceAt =
+                outbound.bind(CodecPlayOutFaceAt.class);
+        codecPlayOutFaceAt.bind(MessagePlayOutFaceAt.Entity.class);
+        codecPlayOutFaceAt.bind(MessagePlayOutFaceAt.Position.class);
         outbound.bind(CodecPlayOutPlayerPositionAndLook.class, MessagePlayOutPlayerPositionAndLook.class);
         outbound.bind(); // TODO: Use Bed
         final CodecRegistration<MessagePlayOutUnlockRecipes, CodecPlayOutUnlockRecipes> codecPlayOutUnlockRecipes =

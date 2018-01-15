@@ -38,31 +38,31 @@ public class ArtRegistryModule extends PluginCatalogRegistryModule<Art> {
 
     @Override
     public void registerDefaults() {
-        register(new LanternArt("minecraft", "alban", "Alban", 1, 1));
-        register(new LanternArt("minecraft", "aztec", "Aztec", 1, 1));
-        register(new LanternArt("minecraft", "aztec_2", "Aztec2", 1, 1));
-        register(new LanternArt("minecraft", "bomb", "Bomb", 1, 1));
-        register(new LanternArt("minecraft", "burning_skull", "BurningSkull", 4, 4));
-        register(new LanternArt("minecraft", "bust", "Bust", 2, 2));
-        register(new LanternArt("minecraft", "courbet", "Courbet", 2, 1));
-        register(new LanternArt("minecraft", "creebet", "Creebet", 2, 1));
-        register(new LanternArt("minecraft", "donkey_kong", "DonkeyKong", 4, 3));
-        register(new LanternArt("minecraft", "fighters", "Fighters", 4, 2));
-        register(new LanternArt("minecraft", "graham", "Graham", 1, 2));
-        register(new LanternArt("minecraft", "kebab", "Kebab", 1, 1));
-        register(new LanternArt("minecraft", "match", "Match", 2, 2));
-        register(new LanternArt("minecraft", "pigscene", "Pigscene", 4, 4));
-        register(new LanternArt("minecraft", "plant", "Plant", 1, 1));
-        register(new LanternArt("minecraft", "pointer", "Pointer", 4, 4));
-        register(new LanternArt("minecraft", "pool", "Pool", 2, 1));
-        register(new LanternArt("minecraft", "sea", "Sea", 2, 1));
-        register(new LanternArt("minecraft", "skeleton", "Skeleton", 4, 3));
-        register(new LanternArt("minecraft", "skull_and_roses", "SkullAndRoses", 2, 2));
-        register(new LanternArt("minecraft", "stage", "Stage", 2, 2));
-        register(new LanternArt("minecraft", "sunset", "Sunset", 2, 1));
-        register(new LanternArt("minecraft", "void", "Void", 2, 2));
-        register(new LanternArt("minecraft", "wanderer", "Wanderer", 1, 2));
-        register(new LanternArt("minecraft", "wasteland", "Wasteland", 1, 1));
-        register(new LanternArt("minecraft", "wither", "Wither", 2, 2));
+        register(new LanternArt("minecraft", "kebab", "Kebab", 0, 1, 1));
+        register(new LanternArt("minecraft", "aztec", "Aztec", 1, 1, 1));
+        register(new LanternArt("minecraft", "alban", "Alban", 2, 1, 1));
+        register(new LanternArt("minecraft", "aztec_2", "Aztec2", 3, 1, 1));
+        register(new LanternArt("minecraft", "bomb", "Bomb", 4, 1, 1));
+        register(new LanternArt("minecraft", "plant", "Plant", 5, 1, 1));
+        register(new LanternArt("minecraft", "wasteland", "Wasteland", 6, 1, 1));
+        register(new LanternArt("minecraft", "pool", "Pool", 7, 2, 1));
+        register(new LanternArt("minecraft", "courbet", "Courbet", 8, 2, 1));
+        register(new LanternArt("minecraft", "sea", "Sea", 9, 2, 1));
+        register(new LanternArt("minecraft", "sunset", "Sunset", 10, 2, 1));
+        register(new LanternArt("minecraft", "creebet", "Creebet", 11, 2, 1));
+        register(new LanternArt("minecraft", "wanderer", "Wanderer", 12, 1, 2));
+        register(new LanternArt("minecraft", "graham", "Graham", 13, 1, 2));
+        register(new LanternArt("minecraft", "match", "Match", 14, 2, 2));
+        register(new LanternArt("minecraft", "bust", "Bust", 15, 2, 2));
+        register(new LanternArt("minecraft", "stage", "Stage", 16, 2, 2));
+        register(new LanternArt("minecraft", "void", "Void", 17, 2, 2));
+        register(new LanternArt("minecraft", "skull_and_roses", "SkullAndRoses", 18, 2, 2));
+        register(new LanternArt("minecraft", "wither", "Wither", 19, 2, 2));
+        register(new LanternArt("minecraft", "fighters", "Fighters", 20, 4, 2));
+        register(new LanternArt("minecraft", "pointer", "Pointer", 21, 4, 4));
+        register(new LanternArt("minecraft", "pigscene", "Pigscene", 22, 4, 4));
+        register(new LanternArt("minecraft", "burning_skull", "BurningSkull", 23, 4, 4));
+        register(new LanternArt("minecraft", "skeleton", "Skeleton", 24, 4, 3));
+        register(new LanternArt("minecraft", "donkey_kong", "DonkeyKong", 25, 4, 3));
     }
 }

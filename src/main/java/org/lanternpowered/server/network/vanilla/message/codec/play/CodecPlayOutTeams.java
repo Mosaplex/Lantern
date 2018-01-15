@@ -46,8 +46,6 @@ public final class CodecPlayOutTeams implements Codec<MessagePlayOutTeams> {
             buf.writeByte((byte) (message instanceof MessagePlayOutTeams.Create ? 0 : 2));
             final MessagePlayOutTeams.CreateOrUpdate message1 = (MessagePlayOutTeams.CreateOrUpdate) message;
             buf.writeString(message1.getDisplayName());
-            buf.writeString(message1.getPrefix());
-            buf.writeString(message1.getSuffix());
             int flags = 0;
             if (message1.getFriendlyFire()) {
                 flags |= 0x01;
@@ -59,7 +57,7 @@ public final class CodecPlayOutTeams implements Codec<MessagePlayOutTeams> {
             buf.writeString(message1.getNameTagVisibility().getId());
             buf.writeString(message1.getCollisionRule().getName());
             final TextColor c = message1.getColor();
-            buf.writeByte((byte) (c == TextColors.NONE || c == TextColors.RESET ? -1 :
+            buf.writeByte((byte) (c == TextColors.NONE || c == TextColors.RESET ? 21 :
                             FormattingCodeTextSerializer.FORMATS_TO_CODE.getChar(c)));
         } else {
             buf.writeByte((byte) (message instanceof MessagePlayOutTeams.Remove ? 1 :

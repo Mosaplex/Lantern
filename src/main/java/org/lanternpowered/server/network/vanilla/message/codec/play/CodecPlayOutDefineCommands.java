@@ -58,7 +58,7 @@ public final class CodecPlayOutDefineCommands implements Codec<MessagePlayOutDef
         // Write all the nodes
         buf.writeVarInt(nodes.size());
         for (Node node : nodes) {
-            int flags = 0;
+            byte flags = 0;
             final Node redirect = node.getRedirect();
             if (redirect != null) {
                 flags |= 0x8;
@@ -77,7 +77,7 @@ public final class CodecPlayOutDefineCommands implements Codec<MessagePlayOutDef
                 flags |= 0x1;
             }
             // Writes the flags
-            buf.writeVarInt(flags);
+            buf.writeByte(flags);
             // Write the children indexes
             final List<Node> children = node.getChildren();
             buf.writeVarInt(children.size()); // The amount of children

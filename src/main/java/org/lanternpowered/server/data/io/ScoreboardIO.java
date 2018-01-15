@@ -274,9 +274,7 @@ public class ScoreboardIO {
                     .set(NAME, team.getName())
                     .set(DISPLAY_NAME, ((LanternTeam) team).getLegacyDisplayName())
                     .set(DEATH_MESSAGE_VISIBILITY, team.getDeathMessageVisibility().getName())
-                    .set(COLLISION_RULE, team.getCollisionRule().getName())
-                    .set(PREFIX, ((LanternTeam) team).getLegacyPrefix())
-                    .set(SUFFIX, ((LanternTeam) team).getLegacySuffix());
+                    .set(COLLISION_RULE, team.getCollisionRule().getName());
             final TextColor teamColor = team.getColor();
             if (teamColor != TextColors.NONE) {
                 container.set(TEAM_COLOR, teamColor.getId());

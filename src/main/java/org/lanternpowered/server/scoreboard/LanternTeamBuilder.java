@@ -47,8 +47,6 @@ public class LanternTeamBuilder implements Team.Builder {
     private String name;
     private Text displayName;
     private TextColor color;
-    private Text prefix;
-    private Text suffix;
     private boolean allowFriendlyFire;
     private boolean showFriendlyInvisibles;
     private Visibility nameTagVisibility;
@@ -87,26 +85,6 @@ public class LanternTeamBuilder implements Team.Builder {
         this.displayName = checkNotNull(displayName, "displayName");
         return this;
     }
-
-    /*
-    @Override
-    public LanternTeamBuilder prefix(Text prefix) {
-        final String legacyPrefix = LanternTexts.toLegacy(checkNotNull(prefix, "prefix"));
-        checkArgument(legacyPrefix.length() <= 16, "Prefix is %s characters long! It must be at most 16.",
-                legacyPrefix.length());
-        this.prefix = checkNotNull(prefix, "prefix");
-        return this;
-    }
-
-    @Override
-    public LanternTeamBuilder suffix(Text suffix) {
-        final String legacySuffix = LanternTexts.toLegacy(checkNotNull(suffix, "suffix"));
-        checkArgument(legacySuffix.length() <= 16, "Suffix is %s characters long! It must be at most 16.",
-                legacySuffix.length());
-        this.suffix = checkNotNull(suffix, "suffix");
-        return this;
-    }
-    */
 
     @Override
     public LanternTeamBuilder allowFriendlyFire(boolean enabled) {
@@ -148,11 +126,9 @@ public class LanternTeamBuilder implements Team.Builder {
     public LanternTeamBuilder from(Team value) {
         this.name(value.getName())
                 .displayName(value.getDisplayName())
-                //.prefix(value.getPrefix())
                 .color(value.getColor())
                 .allowFriendlyFire(value.allowFriendlyFire())
                 .canSeeFriendlyInvisibles(value.canSeeFriendlyInvisibles())
-                //.suffix(value.getSuffix())
                 .nameTagVisibility(value.getNameTagVisibility())
                 .deathTextVisibility(value.getDeathMessageVisibility())
                 .members(value.getMembers());
@@ -164,8 +140,6 @@ public class LanternTeamBuilder implements Team.Builder {
         this.name = null;
         this.displayName = null;
         this.color = TextColors.NONE;
-        this.prefix = Text.of();
-        this.suffix = Text.of();
         this.allowFriendlyFire = false;
         this.showFriendlyInvisibles = false;
         this.nameTagVisibility = Visibilities.ALWAYS;
@@ -179,8 +153,7 @@ public class LanternTeamBuilder implements Team.Builder {
     public Team build() throws IllegalStateException {
         checkState(this.name != null, "name is not set");
         checkState(this.displayName != null, "displayName is not set");
-
-        final LanternTeam team = new LanternTeam(this.name, this.color, this.displayName, this.prefix, this.suffix,
+        final LanternTeam team = new LanternTeam(this.name, this.color, this.displayName,
                 this.allowFriendlyFire, this.showFriendlyInvisibles, this.nameTagVisibility, this.deathMessageVisibility,
                 this.collisionRule);
         this.members.forEach(team::addMember);

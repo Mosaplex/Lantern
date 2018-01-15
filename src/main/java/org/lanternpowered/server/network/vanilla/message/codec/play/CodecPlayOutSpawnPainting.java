@@ -27,6 +27,7 @@ package org.lanternpowered.server.network.vanilla.message.codec.play;
 
 import com.flowpowered.math.vector.Vector3i;
 import io.netty.handler.codec.CodecException;
+import org.lanternpowered.server.data.type.LanternArt;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 import org.lanternpowered.server.network.buffer.objects.Types;
 import org.lanternpowered.server.network.message.codec.Codec;
@@ -41,7 +42,7 @@ public final class CodecPlayOutSpawnPainting implements Codec<MessagePlayOutSpaw
         final ByteBuffer buf = context.byteBufAlloc().buffer();
         buf.writeVarInt(message.getEntityId());
         buf.writeUniqueId(message.getUniqueId());
-        buf.writeString(message.getArt().getName());
+        buf.writeVarInt(((LanternArt) message.getArt()).getInternalId());
         buf.write(Types.VECTOR_3_I, new Vector3i(message.getX(), message.getY(), message.getZ()));
         buf.writeByte(toId(message.getDirection()));
         return buf;

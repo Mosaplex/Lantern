@@ -32,7 +32,6 @@ import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import org.lanternpowered.server.entity.living.player.LanternPlayer;
 import org.lanternpowered.server.event.CauseStack;
 import org.lanternpowered.server.game.LanternGame;
-import org.lanternpowered.server.network.item.NetworkItemTypeRegistry;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSetCooldown;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.CooldownTracker;
@@ -77,8 +76,7 @@ public class LanternCooldownTracker implements CooldownTracker {
             ticks = -1;
         }
         if (ticks >= 0) {
-            this.player.getConnection().send(new MessagePlayOutSetCooldown(
-                    NetworkItemTypeRegistry.getNetworkId(itemType), ticks));
+            this.player.getConnection().send(new MessagePlayOutSetCooldown(itemType, ticks));
         }
         return true;
     }
