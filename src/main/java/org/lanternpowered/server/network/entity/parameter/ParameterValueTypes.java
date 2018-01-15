@@ -48,6 +48,10 @@ public final class ParameterValueTypes {
     public static final ParameterValueType<Float> FLOAT = new ParameterValueType<>(ByteBuffer::writeFloat);
     public static final ParameterValueType<String> STRING = new ParameterValueType<>(ByteBuffer::writeString);
     public static final ParameterValueType<Text> TEXT = new ParameterValueType<>((buf, value) -> buf.write(Types.TEXT, value));
+    public static final ParameterValueType<Optional<Text>> OPTIONAL_TEXT = new ParameterValueType<>((buf, value) -> {
+        buf.writeBoolean(value.isPresent());
+        value.ifPresent(text -> buf.write(Types.TEXT, text));
+    });
     public static final ParameterValueType<ItemStack> ITEM_STACK = new ParameterValueType<>((buf, value) -> buf.write(Types.ITEM_STACK, value));
     public static final ParameterValueType<Boolean> BOOLEAN = new ParameterValueType<>(ByteBuffer::writeBoolean);
     public static final ParameterValueType<Vector3f> VECTOR_F = new ParameterValueType<>((buf, value) -> buf.write(Types.VECTOR_3_F, value));
@@ -82,4 +86,5 @@ public final class ParameterValueTypes {
             buf.writeByte((byte) 0);
         }
     });
+    // TODO: Another parameter type, particle type based?
 }

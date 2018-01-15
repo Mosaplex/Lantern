@@ -52,8 +52,7 @@ import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.enchantment.EnchantmentType;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TranslatableText;
-import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +69,6 @@ public final class ItemStackStore extends DataHolderStore<LanternItemStack> impl
 
     private static final DataQuery IDENTIFIER = DataQuery.of("id");
     public static final DataQuery QUANTITY = DataQuery.of("Count");
-    public static final DataQuery DATA = DataQuery.of("Damage");
     public static final DataQuery TAG = DataQuery.of("tag");
 
     static final DataQuery DISPLAY = DataQuery.of("display");
@@ -87,76 +85,6 @@ public final class ItemStackStore extends DataHolderStore<LanternItemStack> impl
     private final Map<ItemType, ItemTypeObjectSerializer> itemTypeSerializers = new HashMap<>();
 
     {
-        /*
-        final DataValueItemTypeObjectSerializer<TreeType> treeTypeSerializer =
-                new DataValueItemTypeObjectSerializer<>(Keys.TREE_TYPE, TreeTypeRegistryModule.get());
-        add(BlockTypes.LOG, treeTypeSerializer);
-        add(BlockTypes.WOODEN_SLAB, treeTypeSerializer);
-        add(BlockTypes.DOUBLE_WOODEN_SLAB, treeTypeSerializer);
-        add(BlockTypes.PLANKS, treeTypeSerializer);
-        add(BlockTypes.LEAVES, treeTypeSerializer);
-        add(BlockTypes.SAPLING, treeTypeSerializer);
-        final DataValueItemTypeObjectSerializer<TreeType> treeType2Serializer =
-                new DataValueItemTypeObjectSerializer<>(Keys.TREE_TYPE, TreeTypeRegistryModule.get(),
-                        dataValue -> dataValue + 4, internalId -> internalId - 4);
-        add(BlockTypes.LOG2, treeType2Serializer);
-        add(BlockTypes.LEAVES2, treeType2Serializer);
-        final DataValueItemTypeObjectSerializer<SlabType> stoneSlab1Serializer =
-                new DataValueItemTypeObjectSerializer<>(Keys.SLAB_TYPE, SlabTypeRegistryModule.get());
-        add(BlockTypes.STONE_SLAB, stoneSlab1Serializer);
-        add(BlockTypes.DOUBLE_STONE_SLAB, stoneSlab1Serializer);
-        final DataValueItemTypeObjectSerializer<SlabType> stoneSlab2Serializer =
-                new DataValueItemTypeObjectSerializer<>(Keys.SLAB_TYPE, SlabTypeRegistryModule.get(),
-                        dataValue -> dataValue + 8, internalId -> internalId - 8);
-        add(BlockTypes.STONE_SLAB2, stoneSlab2Serializer);
-        add(BlockTypes.DOUBLE_STONE_SLAB2, stoneSlab2Serializer);
-        add(BlockTypes.QUARTZ_BLOCK, new QuartzItemTypeSerializer());
-        final DataValueItemTypeObjectSerializer<SandstoneType> sandstoneTypeSerializer =
-                new DataValueItemTypeObjectSerializer<>(Keys.SANDSTONE_TYPE, SandstoneTypeRegistryModule.get());
-        add(BlockTypes.SANDSTONE, sandstoneTypeSerializer);
-        add(BlockTypes.RED_SANDSTONE, sandstoneTypeSerializer);
-        final DataValueItemTypeObjectSerializer<DyeColor> dyeColorSerializer =
-                new DataValueItemTypeObjectSerializer<>(Keys.DYE_COLOR, DyeColorRegistryModule.get());
-        add(BlockTypes.WOOL, dyeColorSerializer);
-        add(BlockTypes.CARPET, dyeColorSerializer);
-        add(BlockTypes.STAINED_HARDENED_CLAY, dyeColorSerializer);
-        add(BlockTypes.STAINED_GLASS, dyeColorSerializer);
-        add(BlockTypes.STAINED_GLASS_PANE, dyeColorSerializer);
-        final ShulkerBoxItemObjectSerializer shulkerBoxSerializer = new ShulkerBoxItemObjectSerializer();
-        add(BlockTypes.BLACK_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.BLUE_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.BROWN_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.CYAN_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.GRAY_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.GREEN_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.LIGHT_BLUE_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.LIME_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.MAGENTA_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.ORANGE_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.PINK_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.PURPLE_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.RED_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.SILVER_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.WHITE_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.YELLOW_SHULKER_BOX, shulkerBoxSerializer);
-        add(BlockTypes.DIRT, new DataValueItemTypeObjectSerializer<>(Keys.DIRT_TYPE, DirtTypeRegistryModule.get()));
-        add(BlockTypes.STONE, new DataValueItemTypeObjectSerializer<>(Keys.STONE_TYPE, StoneTypeRegistryModule.get()));
-        add(BlockTypes.SAND, new DataValueItemTypeObjectSerializer<>(Keys.SAND_TYPE, SandTypeRegistryModule.get()));
-        add(BlockTypes.SPONGE, new SpongeItemTypeObjectSerializer());
-        add(BlockTypes.TALLGRASS, new DataValueItemTypeObjectSerializer<>(Keys.SHRUB_TYPE, ShrubTypeRegistryModule.get()));
-        add(BlockTypes.YELLOW_FLOWER, new DataValueItemTypeObjectSerializer<>(Keys.PLANT_TYPE, PlantTypeRegistryModule.get()));
-        add(BlockTypes.RED_FLOWER, new DataValueItemTypeObjectSerializer<>(Keys.PLANT_TYPE, PlantTypeRegistryModule.get(),
-                dataValue -> dataValue + 16, internalId -> internalId - 16));
-
-        add(ItemTypes.COAL, new DataValueItemTypeObjectSerializer<>(Keys.COAL_TYPE, CoalTypeRegistryModule.get()));
-        add(ItemTypes.FIREWORK_CHARGE, new FireworkChargeItemTypeObjectSerializer());
-        add(ItemTypes.FIREWORKS, new FireworksItemTypeObjectSerializer());
-        /*
-        add(ItemTypes.DYE, new DataValueItemTypeObjectSerializer<>(Keys.DYE_COLOR, DyeColorRegistryModule.get(),
-                dataValue -> 15 - dataValue, internalId -> 15 - internalId));
-        add(ItemTypes.BANNER, new DataValueItemTypeObjectSerializer<>(Keys.DYE_COLOR, DyeColorRegistryModule.get(),
-                dataValue -> 15 - dataValue, internalId -> 15 - internalId));
-        add(ItemTypes.SKULL, new DataValueItemTypeObjectSerializer<>(Keys.SKULL_TYPE, SkullTypeRegistryModule.get()));*/
         add(ItemTypes.WRITABLE_BOOK, new WritableBookItemTypeObjectSerializer());
         add(ItemTypes.WRITTEN_BOOK, new WrittenBookItemTypeObjectSerializer());
         final PotionEffectsItemTypeObjectSerializer potionEffectsSerializer = new PotionEffectsItemTypeObjectSerializer();
@@ -250,7 +178,6 @@ public final class ItemStackStore extends DataHolderStore<LanternItemStack> impl
         object.setQuantity(dataView.getInt(QUANTITY).get());
         // All the extra data we will handle will be stored in the tag
         final DataView tag = dataView.getView(TAG).orElseGet(() -> DataContainer.createNew(DataView.SafetyMode.NO_DATA_CLONED));
-        // tag.set(ItemTypeObjectSerializer.DATA_VALUE, dataView.getShort(DATA).get()); TODO
         super.deserialize(object, tag);
     }
 
@@ -259,7 +186,6 @@ public final class ItemStackStore extends DataHolderStore<LanternItemStack> impl
         dataView.set(QUANTITY, (byte) object.getQuantity());
         final DataView tag = dataView.createView(TAG);
         super.serialize(object, tag);
-        // dataView.set(DATA, tag.getShort(ItemTypeObjectSerializer.DATA_VALUE).orElse((short) 0)); TODO
         tag.remove(ItemTypeObjectSerializer.DATA_VALUE);
         if (tag.isEmpty()) {
             dataView.remove(TAG);
@@ -276,19 +202,7 @@ public final class ItemStackStore extends DataHolderStore<LanternItemStack> impl
         final Optional<Text> optDisplayName = valueContainer.remove(Keys.DISPLAY_NAME);
         if (optDisplayName.isPresent()) {
             displayView = getOrCreateView(dataView, DISPLAY);
-            final Text displayName = optDisplayName.get();
-            if (displayName instanceof TranslatableText) {
-                final TranslatableText name1 = (TranslatableText) displayName;
-                // We can only do this for translatable text without any formatting
-                if (name1.getArguments().isEmpty() && name1.getChildren().isEmpty() &&
-                        name1.getStyle().isEmpty() && name1.getColor() == TextColors.NONE) {
-                    displayView.set(LOCALIZED_NAME, name1.getTranslation().getId());
-                } else {
-                    displayView.set(NAME, LanternTexts.toLegacy(displayName));
-                }
-            } else {
-                displayView.set(NAME, LanternTexts.toLegacy(displayName));
-            }
+            displayView.set(NAME, TextSerializers.JSON.serialize(optDisplayName.get()));
         }
         final Optional<List<Text>> optLore = valueContainer.remove(Keys.ITEM_LORE);
         if (optLore.isPresent() && !optLore.get().isEmpty()) {

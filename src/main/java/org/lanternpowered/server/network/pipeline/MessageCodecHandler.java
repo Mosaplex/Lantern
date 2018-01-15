@@ -79,14 +79,6 @@ public final class MessageCodecHandler extends MessageToMessageCodec<ByteBuf, Me
             throw new EncoderException("Message type (" + message.getClass().getName() + ") is not registered to allow encoding!");
         }
 
-        /*
-        if (message instanceof MessagePlayOutWorldTime ||
-                message instanceof MessageInOutKeepAlive) {
-        } else {
-            System.out.println(message.getClass().getName());
-        }
-        */
-
         final ByteBuf opcode = ctx.alloc().buffer();
 
         // Write the opcode of the message
