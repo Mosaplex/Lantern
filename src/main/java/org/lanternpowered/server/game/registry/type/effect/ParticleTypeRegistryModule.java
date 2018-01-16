@@ -91,7 +91,7 @@ public final class ParticleTypeRegistryModule extends PluginCatalogRegistryModul
         registerParticle("explosion_emitter", true);
         registerParticle("explosion", false, ImmutableMap.of(
                 ParticleOptions.SCALE, 1.0));
-        registerParticle("falling_block_dust", true, ImmutableMap.of(
+        registerParticle("falling_dust", true, ImmutableMap.of(
                 ParticleOptions.BLOCK_STATE, BlockTypes.STONE.getDefaultState(),
                 ParticleOptions.ITEM_STACK_SNAPSHOT, new LanternItemStack(BlockTypes.STONE).createSnapshot()));
         registerParticle("fireworks_spark", true);
