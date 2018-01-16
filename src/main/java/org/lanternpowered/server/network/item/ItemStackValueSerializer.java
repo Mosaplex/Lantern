@@ -35,9 +35,12 @@ import org.lanternpowered.server.network.buffer.objects.ValueSerializer;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.text.Text;
 
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nullable;
@@ -46,6 +49,7 @@ public class ItemStackValueSerializer implements ValueSerializer<ItemStack> {
 
     private final static DataQuery INTERNAL_ID = DataQuery.of("_%$iid");
     private final static DataQuery UNIQUE_ID = DataQuery.of("_%$uid");
+    private final static DataQuery TEMP_NAME = DataQuery.of("_%$name");
 
     @Override
     public void write(ByteBuffer buf, @Nullable ItemStack object) throws CodecException {
@@ -67,6 +71,22 @@ public class ItemStackValueSerializer implements ValueSerializer<ItemStack> {
             // Add a unique id to the stack to prevent it from stacking
             if (object.getMaxStackQuantity() == 1) {
                 dataView.set(UNIQUE_ID, ThreadLocalRandom.current().nextLong(Long.MAX_VALUE));
+            }
+            // Fix italic text on the client
+            final Optional<Text> optDisplayName = object.get(Keys.DISPLAY_NAME);
+            if (optDisplayName.isPresent()) {
+                final Text displayName = optDisplayName.get();
+
+                // If italic should be overridden and disabled, we have to fix it
+                // The client forces the italic option to true on the root text object
+                // See: MC-123790
+                final Optional<Boolean> italic = displayName.getStyle().isItalic();
+                if (italic.isPresent() && !italic.get()) {
+                    final DataView displayView = dataView.getView(ItemStackStore.DISPLAY).get();
+                    final String json = displayView.getString(ItemStackStore.NAME).get();
+                    displayView.set(TEMP_NAME, json);
+                    displayView.set(ItemStackStore.NAME, "{\"text\":\"\",\"extra\":[" + json + "]}");
+                }
             }
             // Write the data
             buf.writeShort((short) ids[1]); // Network id
@@ -111,6 +131,11 @@ public class ItemStackValueSerializer implements ValueSerializer<ItemStack> {
         final DataView dataView = DataContainer.createNew(DataView.SafetyMode.NO_DATA_CLONED);
         dataView.set(ItemStackStore.QUANTITY, amount);
         if (tag != null) {
+            // Revert italic fix if present
+            tag.getView(ItemStackStore.DISPLAY).ifPresent(displayView -> displayView.getString(TEMP_NAME).ifPresent(name -> {
+                displayView.set(ItemStackStore.NAME, name);
+                displayView.remove(TEMP_NAME);
+            }));
             dataView.set(ItemStackStore.TAG, tag);
         }
         ItemStackStore.INSTANCE.deserialize(itemStack, dataView);

@@ -71,9 +71,8 @@ public final class ItemStackStore extends DataHolderStore<LanternItemStack> impl
     public static final DataQuery QUANTITY = DataQuery.of("Count");
     public static final DataQuery TAG = DataQuery.of("tag");
 
-    static final DataQuery DISPLAY = DataQuery.of("display");
-    private static final DataQuery NAME = DataQuery.of("Name");
-    private static final DataQuery LOCALIZED_NAME = DataQuery.of("LocName");
+    public static final DataQuery DISPLAY = DataQuery.of("display");
+    public static final DataQuery NAME = DataQuery.of("Name");
     private static final DataQuery LORE = DataQuery.of("Lore");
     private static final DataQuery UNBREAKABLE = DataQuery.of("Unbreakable");
     private static final DataQuery CAN_DESTROY = DataQuery.of("CanDestroy");
@@ -235,9 +234,7 @@ public final class ItemStackStore extends DataHolderStore<LanternItemStack> impl
             if (!valueContainer.get(Keys.DISPLAY_NAME).isPresent()) {
                 Optional<String> name = displayView.getString(NAME);
                 if (name.isPresent()) {
-                    valueContainer.set(Keys.DISPLAY_NAME, LanternTexts.fromLegacy(name.get()));
-                } else if ((name = displayView.getString(LOCALIZED_NAME)).isPresent()) {
-                    valueContainer.set(Keys.DISPLAY_NAME, t(name.get()));
+                    valueContainer.set(Keys.DISPLAY_NAME, TextSerializers.JSON.deserialize(name.get()));
                 }
             }
             dataView.getStringList(LORE).ifPresent(lore -> {
