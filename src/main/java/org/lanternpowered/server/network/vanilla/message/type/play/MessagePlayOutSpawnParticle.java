@@ -27,6 +27,8 @@ package org.lanternpowered.server.network.vanilla.message.type.play;
 
 import com.flowpowered.math.vector.Vector3f;
 import org.lanternpowered.server.network.message.Message;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 
@@ -39,17 +41,17 @@ public final class MessagePlayOutSpawnParticle implements Message {
 
     private final float data;
     private final int count;
-    @Nullable private final Object extra;
+    @Nullable private final Data extra;
 
     private final boolean longDistance;
 
     public MessagePlayOutSpawnParticle(int particleId, Vector3f position, Vector3f offset, float data,
-            int count, @Nullable Object extra) {
+            int count, @Nullable Data extra) {
         this(particleId, position, offset, data, count, extra, true);
     }
 
     public MessagePlayOutSpawnParticle(int particleId, Vector3f position, Vector3f offset, float data,
-            int count, @Nullable Object extra, boolean longDistance) {
+            int count, @Nullable Data extra, boolean longDistance) {
         this.longDistance = longDistance;
         this.particleId = particleId;
         this.position = position;
@@ -80,11 +82,71 @@ public final class MessagePlayOutSpawnParticle implements Message {
     }
 
     @Nullable
-    public Object getExtra() {
+    public Data getExtra() {
         return this.extra;
     }
 
     public boolean isLongDistance() {
         return this.longDistance;
+    }
+
+    public static abstract class Data {
+    }
+
+    public static final class ItemData extends Data {
+
+        private final ItemStack itemStack;
+
+        public ItemData(ItemStack itemStack) {
+            this.itemStack = itemStack;
+        }
+
+        public ItemStack getItemStack() {
+            return this.itemStack;
+        }
+    }
+
+    public static final class BlockData extends Data {
+
+        private final int blockState;
+
+        public BlockData(int blockState) {
+            this.blockState = blockState;
+        }
+
+        public int getBlockState() {
+            return this.blockState;
+        }
+    }
+
+    public static final class DustData extends Data {
+
+        private final float red;
+        private final float green;
+        private final float blue;
+        private final float scale;
+
+        public DustData(float red, float green, float blue, float scale) {
+            this.red = red;
+            this.green = green;
+            this.blue = blue;
+            this.scale = scale;
+        }
+
+        public float getRed() {
+            return this.red;
+        }
+
+        public float getBlue() {
+            return this.blue;
+        }
+
+        public float getGreen() {
+            return this.green;
+        }
+
+        public float getScale() {
+            return this.scale;
+        }
     }
 }

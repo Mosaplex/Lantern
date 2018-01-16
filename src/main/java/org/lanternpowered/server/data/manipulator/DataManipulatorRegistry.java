@@ -545,7 +545,7 @@ public class DataManipulatorRegistry {
                     c.register(Keys.AREA_EFFECT_CLOUD_AGE, 0);
                     c.register(Keys.AREA_EFFECT_CLOUD_DURATION, 100);
                     c.register(Keys.AREA_EFFECT_CLOUD_DURATION_ON_USE, 0);
-                    c.register(Keys.AREA_EFFECT_CLOUD_PARTICLE_TYPE, ParticleTypes.SPLASH_POTION);
+                    c.register(Keys.AREA_EFFECT_CLOUD_PARTICLE_TYPE, ParticleTypes.ENTITY_EFFECT);
                     c.register(Keys.AREA_EFFECT_CLOUD_RADIUS, 10.0);
                     c.register(Keys.AREA_EFFECT_CLOUD_RADIUS_ON_USE, 0.0);
                     c.register(Keys.AREA_EFFECT_CLOUD_RADIUS_PER_TICK, 0.1);

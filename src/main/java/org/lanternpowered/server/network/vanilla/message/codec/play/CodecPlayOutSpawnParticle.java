@@ -33,7 +33,6 @@ import org.lanternpowered.server.network.buffer.objects.Types;
 import org.lanternpowered.server.network.message.codec.Codec;
 import org.lanternpowered.server.network.message.codec.CodecContext;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnParticle;
-import org.spongepowered.api.item.inventory.ItemStack;
 
 public final class CodecPlayOutSpawnParticle implements Codec<MessagePlayOutSpawnParticle> {
 
@@ -54,12 +53,18 @@ public final class CodecPlayOutSpawnParticle implements Codec<MessagePlayOutSpaw
         buf.writeFloat(offset.getZ());
         buf.writeFloat(message.getData());
         buf.writeInteger(message.getCount());
-        final Object extra = message.getExtra();
+        final MessagePlayOutSpawnParticle.Data extra = message.getExtra();
         if (extra != null) {
-            if (extra instanceof ItemStack) {
-                buf.write(Types.ITEM_STACK, (ItemStack) extra);
-            } else if (extra instanceof Integer) {
-                buf.writeVarInt((Integer) extra);
+            if (extra instanceof MessagePlayOutSpawnParticle.ItemData) {
+                buf.write(Types.ITEM_STACK, ((MessagePlayOutSpawnParticle.ItemData) extra).getItemStack());
+            } else if (extra instanceof MessagePlayOutSpawnParticle.BlockData) {
+                buf.writeVarInt(((MessagePlayOutSpawnParticle.BlockData) extra).getBlockState());
+            } else if (extra instanceof MessagePlayOutSpawnParticle.DustData) {
+                final MessagePlayOutSpawnParticle.DustData data = (MessagePlayOutSpawnParticle.DustData) extra;
+                buf.writeFloat(data.getRed());
+                buf.writeFloat(data.getGreen());
+                buf.writeFloat(data.getBlue());
+                buf.writeFloat(data.getScale());
             } else {
                 throw new EncoderException("Unsupported extra data type: " + extra.getClass().getName());
             }

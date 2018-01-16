@@ -192,7 +192,7 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
             } else if (type == ParticleTypes.FERTILIZER) {
                 final int quantity = effect.getOptionOrDefault(ParticleOptions.QUANTITY).get();
                 return new CachedEffectMessage(2005, quantity, false);
-            } else if (type == ParticleTypes.SPLASH_POTION) {
+            } else if (type == ParticleTypes.BREAK_SPLASH_POTION) {
                 final int potionId = this.potionEffectTypeToId.getInt(effect.getOptionOrDefault(ParticleOptions.POTION_EFFECT_TYPE).get());
                 return new CachedEffectMessage(2002, potionId, false);
             } else if (type == ParticleTypes.BREAK_BLOCK) {
@@ -203,7 +203,7 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
                 return new CachedEffectMessage(2001, state, false);
             } else if (type == ParticleTypes.MOBSPAWNER_FLAMES) {
                 return new CachedEffectMessage(2004, 0, false);
-            } else if (type == ParticleTypes.ENDER_TELEPORT) {
+            } else if (type == ParticleTypes.BREAK_EYE_OF_ENDER) {
                 return new CachedEffectMessage(2003, 0, false);
             } else if (type == ParticleTypes.DRAGON_BREATH_ATTACK) {
                 return new CachedEffectMessage(2006, 0, false);
@@ -218,7 +218,7 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
         final Vector3f offset = effect.getOption(ParticleOptions.OFFSET).map(Vector3d::toFloat).orElse(Vector3f.ZERO);
         final int quantity = effect.getOption(ParticleOptions.QUANTITY).orElse(1);
 
-        Object extra = null;
+        MessagePlayOutSpawnParticle.Data extra = null;
 
         // The extra values, normal behavior offsetX, offsetY, offsetZ
         double f0 = 0f;
@@ -229,48 +229,61 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
         // Note: If the count > 0 -> speed = 0f else if count = 0 -> speed = 1f
 
         final Optional<BlockState> defaultBlockState;
-        if (type != ParticleTypes.ITEM_CRACK && (defaultBlockState = type.getDefaultOption(ParticleOptions.BLOCK_STATE)).isPresent()) {
+        if (type != ParticleTypes.ITEM && (defaultBlockState = type.getDefaultOption(ParticleOptions.BLOCK_STATE)).isPresent()) {
             final int state = getBlockState(effect, defaultBlockState);
             if (state == 0) {
                 return EmptyCachedMessage.INSTANCE;
             }
-            extra = state;
+            extra = new MessagePlayOutSpawnParticle.BlockData(state);
         }
 
         final Optional<ItemStackSnapshot> defaultItemStackSnapshot;
         if (extra == null && (defaultItemStackSnapshot = type.getDefaultOption(ParticleOptions.ITEM_STACK_SNAPSHOT)).isPresent()) {
             final Optional<ItemStackSnapshot> optItemStackSnapshot = effect.getOption(ParticleOptions.ITEM_STACK_SNAPSHOT);
+            ItemStack item;
             if (optItemStackSnapshot.isPresent()) {
-                extra = optItemStackSnapshot.get().createStack();
+                item = optItemStackSnapshot.get().createStack();
             } else {
                 final Optional<BlockState> optBlockState = effect.getOption(ParticleOptions.BLOCK_STATE);
                 if (optBlockState.isPresent()) {
                     final BlockState blockState = optBlockState.get();
                     final Optional<ItemType> optItemType = blockState.getType().getItem();
                     if (optItemType.isPresent()) {
-                        // TODO: Damage/state values
-                        extra = ItemStack.of(optItemType.get(), 1);
+                        item = ItemStack.of(optItemType.get(), 1);
                     } else {
                         return EmptyCachedMessage.INSTANCE;
                     }
                 } else {
-                    extra = defaultItemStackSnapshot.get().createStack();
+                    item = defaultItemStackSnapshot.get().createStack();
                 }
             }
+            extra = new MessagePlayOutSpawnParticle.ItemData(item);
         }
 
         final Optional<Double> defaultScale = type.getDefaultOption(ParticleOptions.SCALE);
         final Optional<Color> defaultColor;
         final Optional<NotePitch> defaultNote;
         final Optional<Vector3d> defaultVelocity;
-        if (defaultScale.isPresent()) {
+        if (type == ParticleTypes.DUST) {
+            defaultColor = type.getDefaultOption(ParticleOptions.COLOR);
+
+            // The following options must be present for dust
+            final double scale = effect.getOption(ParticleOptions.SCALE).orElse(defaultScale.get());
+            final Color color = effect.getOption(ParticleOptions.COLOR).orElse(defaultColor.get());
+
+            final float r = (float) color.getRed() / 255f;
+            final float g = (float) color.getGreen() / 255f;
+            final float b = (float) color.getBlue() / 255f;
+
+            extra = new MessagePlayOutSpawnParticle.DustData(r, g, b, (float) scale);
+        } else if (defaultScale.isPresent()) {
             double scale = effect.getOption(ParticleOptions.SCALE).orElse(defaultScale.get());
 
             // The formula of the large explosion acts strange
             // Client formula: sizeClient = 1 - sizeServer * 0.5
             // The particle effect returns the client value so
             // Server formula: sizeServer = (-sizeClient * 2) + 2
-            if (type == ParticleTypes.LARGE_EXPLOSION || type == ParticleTypes.SWEEP_ATTACK) {
+            if (type == ParticleTypes.EXPLOSION || type == ParticleTypes.SWEEP_ATTACK) {
                 scale = (-scale * 2f) + 2f;
             }
 
@@ -279,8 +292,8 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
             }
 
             f0 = scale;
-        } else if ((defaultColor = type.getDefaultOption(ParticleOptions.COLOR)).isPresent()) {
-            final boolean isSpell = type == ParticleTypes.MOB_SPELL || type == ParticleTypes.AMBIENT_MOB_SPELL;
+        } else if (type != ParticleTypes.DUST && (defaultColor = type.getDefaultOption(ParticleOptions.COLOR)).isPresent()) {
+            final boolean isSpell = type == ParticleTypes.ENTITY_EFFECT || type == ParticleTypes.AMBIENT_ENTITY_EFFECT;
             Color color = effect.getOption(ParticleOptions.COLOR).orElse(null);
 
             if (!isSpell && (color == null || color.equals(defaultColor.get()))) {
@@ -300,11 +313,6 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
                 f0 = Math.max(f0, 0.001f);
                 f2 = Math.max(f0, 0.001f);
             }
-
-            // If the f0 value 0 is, the redstone will set it automatically to red 255
-            if (f0 == 0f && type == ParticleTypes.REDSTONE_DUST) {
-                f0 = 0.00001f;
-            }
         } else if ((defaultNote = type.getDefaultOption(ParticleOptions.NOTE)).isPresent()) {
             final NotePitch notePitch = effect.getOption(ParticleOptions.NOTE).orElse(defaultNote.get());
             final float note = ((LanternNotePitch) notePitch).getInternalId();
@@ -314,7 +322,9 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
             }
 
             f0 = note / 24f;
-        } else if ((defaultVelocity = type.getDefaultOption(ParticleOptions.VELOCITY)).isPresent()) {
+        }
+
+        if ((defaultVelocity = type.getDefaultOption(ParticleOptions.VELOCITY)).isPresent()) {
             final Vector3d velocity = effect.getOption(ParticleOptions.VELOCITY).orElse(defaultVelocity.get());
 
             f0 = velocity.getX();
@@ -329,7 +339,7 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
             }
 
             // The y value won't work for this effect, if the value isn't 0 the velocity won't work
-            if (type == ParticleTypes.WATER_SPLASH) {
+            if (type == ParticleTypes.RAIN_SPLASH) {
                 f1 = 0f;
             }
 
@@ -400,9 +410,10 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
         private final int particleId;
         private final Vector3f offsetData;
         private final int count;
-        @Nullable private final Object extra;
+        @Nullable private final MessagePlayOutSpawnParticle.Data extra;
 
-        private CachedParticleMessage(int particleId, Vector3f offsetData, int count, @Nullable Object extra) {
+        private CachedParticleMessage(int particleId, Vector3f offsetData, int count,
+                @Nullable MessagePlayOutSpawnParticle.Data extra) {
             this.particleId = particleId;
             this.offsetData = offsetData;
             this.count = count;
@@ -422,9 +433,10 @@ public final class ProcessorPlayOutParticleEffect implements Processor<MessagePl
         private final Vector3f offsetData;
         private final Vector3f offset;
         private final int count;
-        @Nullable private final Object extra;
+        @Nullable private final MessagePlayOutSpawnParticle.Data extra;
 
-        private CachedOffsetParticleMessage(int particleId, Vector3f offsetData, Vector3f offset, int count, @Nullable Object extra) {
+        private CachedOffsetParticleMessage(int particleId, Vector3f offsetData, Vector3f offset, int count,
+                @Nullable MessagePlayOutSpawnParticle.Data extra) {
             this.particleId = particleId;
             this.offsetData = offsetData;
             this.offset = offset;
