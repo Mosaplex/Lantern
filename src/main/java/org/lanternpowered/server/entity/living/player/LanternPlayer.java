@@ -110,7 +110,7 @@ import org.spongepowered.api.data.type.SkinPart;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
-import org.spongepowered.api.effect.sound.record.RecordType;
+import org.spongepowered.api.effect.sound.music.MusicDisc;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
@@ -875,18 +875,18 @@ public class LanternPlayer extends AbstractUser implements Player, AbstractViewe
     }
 
     @Override
-    public void playRecord(Vector3i position, RecordType recordType) {
-        playOrStopRecord(position, checkNotNull(recordType, "recordType"));
+    public void playMusicDisc(Vector3i position, MusicDisc musicDisc) {
+        playOrStopMusicDisc(position, checkNotNull(musicDisc, "musicDisc"));
     }
 
     @Override
-    public void stopRecord(Vector3i position) {
-        playOrStopRecord(position, null);
+    public void stopMusicDisc(Vector3i position) {
+        playOrStopMusicDisc(position, null);
     }
 
-    private void playOrStopRecord(Vector3i position, @Nullable RecordType recordType) {
+    private void playOrStopMusicDisc(Vector3i position, @Nullable MusicDisc musicDisc) {
         checkNotNull(position, "position");
-        getConnection().send(new MessagePlayOutRecord(position, recordType));
+        getConnection().send(new MessagePlayOutRecord(position, musicDisc));
     }
 
     @Override

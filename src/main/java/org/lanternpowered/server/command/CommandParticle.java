@@ -150,7 +150,7 @@ public final class CommandParticle extends CommandProvider {
 
                     final int dataLength;
                     if (particleType == ParticleTypes.BREAK_BLOCK ||
-                            particleType == ParticleTypes.FALLING_BLOCK_DUST ||
+                            particleType == ParticleTypes.FALLING_DUST ||
                             particleType == ParticleTypes.BLOCK) {
                         dataLength = 1;
                     } else if (particleType == ParticleTypes.ITEM) {

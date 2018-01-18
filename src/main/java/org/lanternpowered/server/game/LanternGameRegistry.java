@@ -126,13 +126,13 @@ import org.lanternpowered.server.game.registry.type.data.HorseColorRegistryModul
 import org.lanternpowered.server.game.registry.type.data.HorseStyleRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.KeyRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.LlamaVariantRegistryModule;
+import org.lanternpowered.server.game.registry.type.data.MusicDiscRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.NotePitchRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.OcelotTypeRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.PickupRuleRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.ProfessionRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.RabbitTypeRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.RailDirectionRegistryModule;
-import org.lanternpowered.server.game.registry.type.data.RecordTypeRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.SkinPartRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.ToolTypeRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.TreeTypeRegistryModule;
@@ -299,7 +299,7 @@ import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.effect.sound.SoundCategory;
 import org.spongepowered.api.effect.sound.SoundType;
-import org.spongepowered.api.effect.sound.record.RecordType;
+import org.spongepowered.api.effect.sound.music.MusicDisc;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.ai.task.AITaskType;
 import org.spongepowered.api.entity.ai.task.AbstractAITask;
@@ -608,7 +608,7 @@ public class LanternGameRegistry implements GameRegistry {
                 .registerModule(StatisticType.class, StatisticTypeRegistryModule.get())
                 .registerModule(Statistic.class, StatisticRegistryModule.get())
                 .registerModule(DataRegistration.class, DataManipulatorRegistryModule.get())
-                .registerModule(RecordType.class, RecordTypeRegistryModule.get())
+                .registerModule(MusicDisc.class, MusicDiscRegistryModule.get())
                 .registerModule(FluidType.class, FluidTypeRegistryModule.get())
                 .registerModule(EventContextKey.class, EventContextKeysModule.get())
                 .registerModule(new BlockChangeFlagRegistryModule())

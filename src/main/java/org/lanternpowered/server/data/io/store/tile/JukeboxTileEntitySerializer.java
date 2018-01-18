@@ -44,9 +44,9 @@ public class JukeboxTileEntitySerializer<T extends LanternJukebox> extends TileE
     @Override
     public void deserializeValues(T object, SimpleValueContainer valueContainer, DataView dataView) {
         super.deserializeValues(object, valueContainer, dataView);
-        final Optional<DataView> optRecordItem = dataView.getView(RECORD_ITEM);
-        if (optRecordItem.isPresent()) {
-            object.insertRecord(ItemStackStore.INSTANCE.deserialize(optRecordItem.get()));
+        final Optional<DataView> optMusicDisc = dataView.getView(RECORD_ITEM);
+        if (optMusicDisc.isPresent()) {
+            object.insert(ItemStackStore.INSTANCE.deserialize(optMusicDisc.get()));
         } else {/*
             dataView.getInt(RECORD).ifPresent(record -> ItemRegistryModule.get().getTypeByInternalId(record)
                     .ifPresent(itemType -> object.insertRecord(ItemStack.of(itemType, 1))));*/

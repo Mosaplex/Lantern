@@ -27,13 +27,13 @@ package org.lanternpowered.server.data.type.record;
 
 import org.lanternpowered.server.catalog.PluginCatalogType;
 import org.spongepowered.api.effect.sound.SoundType;
-import org.spongepowered.api.effect.sound.record.RecordType;
+import org.spongepowered.api.effect.sound.music.MusicDisc;
 
-public class LanternRecordType extends PluginCatalogType.Base.Translatable.Internal implements RecordType {
+public class LanternMusicDisc extends PluginCatalogType.Base.Translatable.Internal implements MusicDisc {
 
     private final SoundType soundType;
 
-    public LanternRecordType(String pluginId, String name, String translation, int internalId, SoundType soundType) {
+    public LanternMusicDisc(String pluginId, String name, String translation, int internalId, SoundType soundType) {
         super(pluginId, name, translation, internalId);
         this.soundType = soundType;
     }

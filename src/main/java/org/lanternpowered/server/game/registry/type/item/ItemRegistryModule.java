@@ -32,7 +32,7 @@ import static org.lanternpowered.server.item.PropertyProviders.dualWield;
 import static org.lanternpowered.server.item.PropertyProviders.equipmentType;
 import static org.lanternpowered.server.item.PropertyProviders.foodRestoration;
 import static org.lanternpowered.server.item.PropertyProviders.maximumUseDuration;
-import static org.lanternpowered.server.item.PropertyProviders.recordType;
+import static org.lanternpowered.server.item.PropertyProviders.musicDisc;
 import static org.lanternpowered.server.item.PropertyProviders.saturation;
 import static org.lanternpowered.server.item.PropertyProviders.toolType;
 import static org.lanternpowered.server.item.PropertyProviders.useDuration;
@@ -46,7 +46,7 @@ import org.lanternpowered.server.game.Lantern;
 import org.lanternpowered.server.game.registry.AdditionalPluginCatalogRegistryModule;
 import org.lanternpowered.server.game.registry.type.block.BlockRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.ArmorTypeRegistryModule;
-import org.lanternpowered.server.game.registry.type.data.RecordTypeRegistryModule;
+import org.lanternpowered.server.game.registry.type.data.MusicDiscRegistryModule;
 import org.lanternpowered.server.game.registry.type.data.ToolTypeRegistryModule;
 import org.lanternpowered.server.game.registry.type.effect.PotionEffectTypeRegistryModule;
 import org.lanternpowered.server.game.registry.type.item.inventory.equipment.EquipmentTypeRegistryModule;
@@ -69,8 +69,8 @@ import org.spongepowered.api.data.type.ToolType;
 import org.spongepowered.api.data.type.ToolTypes;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectTypes;
-import org.spongepowered.api.effect.sound.record.RecordType;
-import org.spongepowered.api.effect.sound.record.RecordTypes;
+import org.spongepowered.api.effect.sound.music.MusicDisc;
+import org.spongepowered.api.effect.sound.music.MusicDiscs;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
@@ -88,7 +88,7 @@ import java.util.function.Function;
         EquipmentTypeRegistryModule.class,
         ToolTypeRegistryModule.class,
         PotionEffectTypeRegistryModule.class,
-        RecordTypeRegistryModule.class,
+        MusicDiscRegistryModule.class,
         EquipmentTypeRegistryModule.class,
 })
 public final class ItemRegistryModule extends AdditionalPluginCatalogRegistryModule<ItemType> {
@@ -1563,62 +1563,62 @@ public final class ItemRegistryModule extends AdditionalPluginCatalogRegistryMod
         /////////////////////////
         ///   Music Disc 13   ///
         /////////////////////////
-        register(recordBuilder(RecordTypes.THIRTEEN)
+        register(musicDiscBuilder(MusicDiscs.THIRTEEN)
                 .build("minecraft", "music_disc_13"));
         //////////////////////////
         ///   Music Disc Cat   ///
         //////////////////////////
-        register(recordBuilder(RecordTypes.CAT)
+        register(musicDiscBuilder(MusicDiscs.CAT)
                 .build("minecraft", "music_disc_cat"));
         /////////////////////////////
         ///   Music Disc Blocks   ///
         /////////////////////////////
-        register(recordBuilder(RecordTypes.BLOCKS)
+        register(musicDiscBuilder(MusicDiscs.BLOCKS)
                 .build("minecraft", "music_disc_blocks"));
         ////////////////////////////
         ///   Music Disc Chirp   ///
         ////////////////////////////
-        register(recordBuilder(RecordTypes.CHIRP)
+        register(musicDiscBuilder(MusicDiscs.CHIRP)
                 .build("minecraft", "music_disc_chirp"));
         //////////////////////////
         ///   Music Disc Far   ///
         //////////////////////////
-        register(recordBuilder(RecordTypes.FAR)
+        register(musicDiscBuilder(MusicDiscs.FAR)
                 .build("minecraft", "music_disc_far"));
         ///////////////////////////
         ///   Music Disc Mall   ///
         ///////////////////////////
-        register(recordBuilder(RecordTypes.MALL)
+        register(musicDiscBuilder(MusicDiscs.MALL)
                 .build("minecraft", "music_disc_mall"));
         //////////////////////////////
         ///   Music Disc Mellohi   ///
         //////////////////////////////
-        register(recordBuilder(RecordTypes.MELLOHI)
+        register(musicDiscBuilder(MusicDiscs.MELLOHI)
                 .build("minecraft", "music_disc_mellohi"));
         ///////////////////////////
         ///   Music Disc Stal   ///
         ///////////////////////////
-        register(recordBuilder(RecordTypes.STAL)
+        register(musicDiscBuilder(MusicDiscs.STAL)
                 .build("minecraft", "music_disc_stal"));
         ////////////////////////////
         ///   Music Disc Strad   ///
         ////////////////////////////
-        register(recordBuilder(RecordTypes.STRAD)
+        register(musicDiscBuilder(MusicDiscs.STRAD)
                 .build("minecraft", "music_disc_strad"));
         ///////////////////////////
         ///   Music Disc Ward   ///
         ///////////////////////////
-        register(recordBuilder(RecordTypes.WARD)
+        register(musicDiscBuilder(MusicDiscs.WARD)
                 .build("minecraft", "music_disc_ward"));
         /////////////////////////
         ///   Music Disc 11   ///
         /////////////////////////
-        register(recordBuilder(RecordTypes.ELEVEN)
+        register(musicDiscBuilder(MusicDiscs.ELEVEN)
                 .build("minecraft", "music_disc_11"));
         ///////////////////////////
         ///   Music Disc Wait   ///
         ///////////////////////////
-        register(recordBuilder(RecordTypes.WAIT)
+        register(musicDiscBuilder(MusicDiscs.WAIT)
                 .build("minecraft", "music_disc_wait"));
         ///////////////////////
         ///   Debug Stick   ///
@@ -1651,12 +1651,11 @@ public final class ItemRegistryModule extends AdditionalPluginCatalogRegistryMod
                 });
     }
 
-    private ItemTypeBuilder recordBuilder(RecordType recordType) {
+    private ItemTypeBuilder musicDiscBuilder(MusicDisc musicDisc) {
         return builder()
                 .maxStackQuantity(1)
                 .properties(builder -> builder
-                        .add(recordType(recordType)))
-                .translation(tr("item.record.name"));
+                        .add(musicDisc(musicDisc)));
     }
 
     private ItemTypeBuilder durableBuilder(int useLimit) {

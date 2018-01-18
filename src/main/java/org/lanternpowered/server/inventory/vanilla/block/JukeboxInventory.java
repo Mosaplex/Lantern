@@ -45,7 +45,7 @@ public class JukeboxInventory extends LanternFilteringSlot implements ITileEntit
         // don't eject the current one, who's interacting
         // with the inventory should handle that
         if (this.carrier instanceof Jukebox) {
-            ((Jukebox) this.carrier).stopRecord();
+            ((Jukebox) this.carrier).stop();
         }
     }
 
