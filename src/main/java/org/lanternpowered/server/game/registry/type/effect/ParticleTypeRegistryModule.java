@@ -115,6 +115,7 @@ public final class ParticleTypeRegistryModule extends PluginCatalogRegistryModul
         registerParticle("rain_splash", true);
         registerParticle("smoke", true);
         registerParticle("spit", true);
+        registerParticle("squid_ink", false); // TODO: Check velocity, etc..
         registerParticle("sweep_attack", false, ImmutableMap.of(
                 ParticleOptions.SCALE, 1.0));
         registerParticle("totem_of_undying", true);
@@ -122,6 +123,9 @@ public final class ParticleTypeRegistryModule extends PluginCatalogRegistryModul
         registerParticle("water_splash", false);
         registerParticle("witch_magic", true, ImmutableMap.of(
                 ParticleOptions.SLOW_HORIZONTAL_VELOCITY, false));
+        registerParticle("bubble_pop", false); // TODO: Check velocity, etc..
+        registerParticle("current_down", false); // TODO: Check velocity, etc..
+        registerParticle("bubble_column_up", false); // TODO: Check velocity, etc..
 
         // Extra effect types
         registerEffect("break_block", ImmutableMap.of(

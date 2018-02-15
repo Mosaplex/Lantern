@@ -50,6 +50,8 @@ public final class CodecPlayOutUnlockRecipes implements Codec<MessagePlayOutUnlo
         }
         buf.writeBoolean(message.hasOpenCraftingBook());
         buf.writeBoolean(message.hasCraftingFilter());
+        buf.writeBoolean(message.hasUnknown1());
+        buf.writeBoolean(message.hasUnknown2());
         List<String> recipeIds = message.getRecipeIds();
         buf.writeVarInt(recipeIds.size());
         recipeIds.forEach(buf::writeString);

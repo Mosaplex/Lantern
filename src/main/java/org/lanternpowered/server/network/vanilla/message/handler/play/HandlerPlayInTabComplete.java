@@ -40,7 +40,10 @@ public final class HandlerPlayInTabComplete implements Handler<MessagePlayInTabC
         final String text = message.getInput();
         final LanternPlayer player = context.getSession().getPlayer();
         player.sendMessage(Text.of("Received tab completion (" + message.getId() + "): " + text));
-        player.getConnection().send(new MessagePlayOutTabComplete(Lists.newArrayList("Avalue", "Btest", "Cwhy"), message.getId(), 0, 20));
+        player.getConnection().send(new MessagePlayOutTabComplete(Lists.newArrayList(
+                new MessagePlayOutTabComplete.Match("Avalue", null),
+                new MessagePlayOutTabComplete.Match("Btest", null),
+                new MessagePlayOutTabComplete.Match("Cwhy", null)), message.getId(), 0, 20));
 
         /*
         // The content with normalized spaces, the spaces are trimmed

@@ -425,14 +425,10 @@ public final class ObservedChunkManager implements WorldEventListener {
                 }
             }
 
-            byte[] biomesArray = null;
+            short[] biomesArray = null;
             if (biomes) {
-                short[] biomesArray0 = chunk.getBiomes();
-                biomesArray = new byte[biomesArray0.length];
-                for (int i = 0; i < biomesArray0.length; i++) {
-                    // TODO: Only allow non-custom biome types to be send and maybe the ones supported by forge mods?
-                    biomesArray[i] = (byte) (biomesArray0[i] & 0xff);
-                }
+                biomesArray = chunk.getBiomes();
+                // TODO: Only allow non-custom biome types to be send and maybe the ones supported by forge mods?
             }
 
             return new MessagePlayOutChunkData(this.coords.getX(), this.coords.getY(), skyLight, msgSections, biomesArray);
