@@ -27,6 +27,7 @@ package org.lanternpowered.server.network.vanilla.message.type.play;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import org.lanternpowered.server.item.recipe.RecipeBookState;
 import org.lanternpowered.server.network.message.Message;
 import org.lanternpowered.server.util.collect.Collections3;
 
@@ -34,43 +35,31 @@ import java.util.List;
 
 public abstract class MessagePlayOutUnlockRecipes implements Message {
 
-    private final boolean openRecipeBook;
-    private final boolean craftingFilter;
-    private final boolean unknown1;
-    private final boolean unknown2;
+    private final RecipeBookState craftingRecipeBookState;
+    private final RecipeBookState smeltingRecipeBookState;
     private final List<String> recipeIds;
 
-    private MessagePlayOutUnlockRecipes(boolean openRecipeBook, boolean craftingFilter,
-            boolean unknown1, boolean unknown2, List<String> recipeIds) {
-        this.unknown1 = unknown1;
-        this.unknown2 = unknown2;
+    private MessagePlayOutUnlockRecipes(
+            RecipeBookState craftingRecipeBookState,
+            RecipeBookState smeltingRecipeBookState,
+            List<String> recipeIds) {
+        this.craftingRecipeBookState = craftingRecipeBookState;
+        this.smeltingRecipeBookState = smeltingRecipeBookState;
         this.recipeIds = ImmutableList.copyOf(recipeIds);
-        this.openRecipeBook = openRecipeBook;
-        this.craftingFilter = craftingFilter;
     }
 
-    public boolean hasOpenCraftingBook() {
-        return this.openRecipeBook;
+    public RecipeBookState getCraftingRecipeBookState() {
+        return this.craftingRecipeBookState;
     }
 
-    public boolean hasCraftingFilter() {
-        return this.craftingFilter;
-    }
-
-    public boolean hasUnknown1() {
-        return this.unknown1;
-    }
-
-    public boolean hasUnknown2() {
-        return this.unknown2;
+    public RecipeBookState getSmeltingRecipeBookState() {
+        return this.smeltingRecipeBookState;
     }
 
     public MoreObjects.ToStringHelper toStringHelper() {
         return MoreObjects.toStringHelper(getClass().getSuperclass().getSimpleName() + "." + getClass().getSimpleName())
-                .add("openRecipeBook", this.openRecipeBook)
-                .add("craftingFilter", this.craftingFilter)
-                .add("unknown1", this.unknown1)
-                .add("unknown2", this.unknown2)
+                .add("craftingRecipeBookState", this.craftingRecipeBookState)
+                .add("smeltingRecipeBookState", this.smeltingRecipeBookState)
                 .add("recipeIds", Collections3.toString(this.recipeIds));
     }
 
@@ -85,9 +74,11 @@ public abstract class MessagePlayOutUnlockRecipes implements Message {
 
     public final static class Remove extends MessagePlayOutUnlockRecipes {
 
-        public Remove(boolean openRecipeBook, boolean craftingFilter, boolean unknown1, boolean unknown2,
+        public Remove(
+                RecipeBookState craftingRecipeBookState,
+                RecipeBookState smeltingRecipeBookState,
                 List<String> recipeIds) {
-            super(openRecipeBook, craftingFilter, unknown1, unknown2, recipeIds);
+            super(craftingRecipeBookState, smeltingRecipeBookState, recipeIds);
         }
     }
 
@@ -95,9 +86,11 @@ public abstract class MessagePlayOutUnlockRecipes implements Message {
 
         private final List<String> recipeIdsToBeDisplayed;
 
-        public Init(boolean openRecipeBook, boolean craftingFilter, boolean unknown1, boolean unknown2,
+        public Init(
+                RecipeBookState craftingRecipeBookState,
+                RecipeBookState smeltingRecipeBookState,
                 List<String> recipeIds, List<String> recipeIdsToBeDisplayed) {
-            super(openRecipeBook, craftingFilter, unknown1, unknown2, recipeIds);
+            super(craftingRecipeBookState, smeltingRecipeBookState, recipeIds);
             this.recipeIdsToBeDisplayed = ImmutableList.copyOf(recipeIdsToBeDisplayed);
         }
 
@@ -114,9 +107,11 @@ public abstract class MessagePlayOutUnlockRecipes implements Message {
 
     public final static class Add extends MessagePlayOutUnlockRecipes {
 
-        public Add(boolean openRecipeBook, boolean craftingFilter, boolean unknown1, boolean unknown2,
+        public Add(
+                RecipeBookState craftingRecipeBookState,
+                RecipeBookState smeltingRecipeBookState,
                 List<String> recipeIds) {
-            super(openRecipeBook, craftingFilter, unknown1, unknown2, recipeIds);
+            super(craftingRecipeBookState, smeltingRecipeBookState, recipeIds);
         }
     }
 }

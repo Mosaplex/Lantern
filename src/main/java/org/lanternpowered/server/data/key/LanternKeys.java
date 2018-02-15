@@ -38,6 +38,7 @@ import org.lanternpowered.server.data.type.RedstoneConnectionType;
 import org.lanternpowered.server.effect.potion.PotionType;
 import org.lanternpowered.server.extra.accessory.Accessory;
 import org.lanternpowered.server.inventory.InventorySnapshot;
+import org.lanternpowered.server.item.recipe.RecipeBookState;
 import org.spongepowered.api.advancement.AdvancementTree;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataView;
@@ -124,10 +125,10 @@ public final class LanternKeys {
             makeMutableBoundedValueKey(Double.class, DataQuery.of("MaxExhaustion"), "max_exhaustion");
     public static final Key<MutableBoundedValue<Integer>> MAX_FOOD_LEVEL =
             makeMutableBoundedValueKey(Integer.class, DataQuery.of("MaxFoodLevel"), "max_food_level");
-    public static final Key<Value<Boolean>> RECIPE_BOOK_GUI_OPEN =
-            makeValueKey(Boolean.class, DataQuery.of("RecipeBookGUIOpen"), "recipe_book_gui_open");
-    public static final Key<Value<Boolean>> RECIPE_BOOK_FILTER_ACTIVE =
-            makeValueKey(Boolean.class, DataQuery.of("RecipeBookFilterActive"), "recipe_book_filter_active");
+    public static final Key<Value<RecipeBookState>> CRAFTING_RECIPE_BOOK_STATE =
+            makeValueKey(RecipeBookState.class, DataQuery.of("CraftingRecipeBookState"), "crafting_recipe_book_state");
+    public static final Key<Value<RecipeBookState>> SMELTING_RECIPE_BOOK_STATE =
+            makeValueKey(RecipeBookState.class, DataQuery.of("SmeltingRecipeBookState"), "smelting_recipe_book_state");
     public static final Key<ListValue<Accessory>> ACCESSORIES =
             makeListKey(Accessory.class, DataQuery.of("Accessories"), "accessories");
     public static final Key<OptionalValue<AdvancementTree>> OPEN_ADVANCEMENT_TREE =

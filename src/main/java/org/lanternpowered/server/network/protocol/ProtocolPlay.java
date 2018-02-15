@@ -181,7 +181,7 @@ import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayIn
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInClickRecipe;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInClickWindow;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInClientSettings;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInCraftingBookState;
+import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInRecipeBookStates;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInCreativeWindowAction;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInDisplayedRecipe;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInDropHeldItem;
@@ -428,7 +428,7 @@ final class ProtocolPlay extends ProtocolBase {
         // Provided by CodecPlayInCraftingBookData
         inbound.bindMessage(MessagePlayInDisplayedRecipe.class)
                 .bindHandler(new HandlerPlayInContainerSessionForwarding<>(PlayerContainerSession::handleDisplayedRecipe));
-        inbound.bindMessage(MessagePlayInCraftingBookState.class)
+        inbound.bindMessage(MessagePlayInRecipeBookStates.class)
                 .bindHandler(new HandlerPlayInCraftingBookState());
         // Provided by CodecPlayInAdvancementTab
         final HandlerPlayInAdvancementTree handlerPlayInAdvancementTree = new HandlerPlayInAdvancementTree();

@@ -1030,7 +1030,7 @@ public final class BlockRegistryModule extends AdditionalPluginCatalogRegistryMo
         //////////////////////
         ///   Terracotta   ///
         //////////////////////
-        register(terracottaBuilder().build("minecraft", "hardened_clay")); // TODO: The wiki was too fast?
+        register(terracottaBuilder().build("minecraft", "terracotta"));
         register(terracottaBuilder().build("minecraft", "white_terracotta"));
         register(terracottaBuilder().build("minecraft", "orange_terracotta"));
         register(terracottaBuilder().build("minecraft", "magenta_terracotta"));

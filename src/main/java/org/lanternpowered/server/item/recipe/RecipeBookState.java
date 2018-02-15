@@ -23,34 +23,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.vanilla.message.type.play;
+package org.lanternpowered.server.item.recipe;
 
 import com.google.common.base.MoreObjects;
-import org.lanternpowered.server.network.message.Message;
 
-public final class MessagePlayInCraftingBookState implements Message {
+public final class RecipeBookState {
 
-    private final boolean open;
-    private final boolean filter;
+    public static final RecipeBookState DEFAULT = new RecipeBookState(false, false);
 
-    public MessagePlayInCraftingBookState(boolean open, boolean filter) {
-        this.filter = filter;
-        this.open = open;
+    private final boolean currentlyOpen;
+    private final boolean filterActive;
+
+    public RecipeBookState(boolean currentlyOpen, boolean filterActive) {
+        this.currentlyOpen = currentlyOpen;
+        this.filterActive = filterActive;
     }
 
     public boolean isCurrentlyOpen() {
-        return this.open;
+        return this.currentlyOpen;
     }
 
-    public boolean hasFilter() {
-        return this.filter;
+    public boolean isFilterActive() {
+        return this.filterActive;
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("open", this.open)
-                .add("filter", this.filter)
+                .add("currentlyOpen", this.currentlyOpen)
+                .add("filterActive", this.filterActive)
                 .toString();
     }
 }

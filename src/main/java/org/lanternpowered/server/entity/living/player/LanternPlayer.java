@@ -409,9 +409,8 @@ public class LanternPlayer extends AbstractUser implements Player, AbstractViewe
                     recipes[i] = i;
                 }*/
                 this.session.send(new MessagePlayOutUnlockRecipes.Add(
-                        get(LanternKeys.RECIPE_BOOK_GUI_OPEN).get(),
-                        get(LanternKeys.RECIPE_BOOK_FILTER_ACTIVE).get(),
-                        false, false,
+                        get(LanternKeys.CRAFTING_RECIPE_BOOK_STATE).get(),
+                        get(LanternKeys.SMELTING_RECIPE_BOOK_STATE).get(),
                         new ArrayList<>()));
             } else {
                 if (oldWorld != null && oldWorld != world) {

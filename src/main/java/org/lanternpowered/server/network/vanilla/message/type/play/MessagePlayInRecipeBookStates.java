@@ -23,35 +23,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.vanilla.message.codec.play;
+package org.lanternpowered.server.network.vanilla.message.type.play;
 
-import io.netty.handler.codec.CodecException;
-import org.lanternpowered.server.network.buffer.ByteBuffer;
+import com.google.common.base.MoreObjects;
 import org.lanternpowered.server.network.message.Message;
-import org.lanternpowered.server.network.message.NullMessage;
-import org.lanternpowered.server.network.message.codec.Codec;
-import org.lanternpowered.server.network.message.codec.CodecContext;
 import org.lanternpowered.server.item.recipe.RecipeBookState;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInRecipeBookStates;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayInDisplayedRecipe;
 
-public final class CodecPlayInCraftingBookData implements Codec<Message> {
+public final class MessagePlayInRecipeBookStates implements Message {
+
+    private final RecipeBookState craftingRecipeBookState;
+    private final RecipeBookState smeltingRecipeBookState;
+
+    public MessagePlayInRecipeBookStates(RecipeBookState craftingRecipeBookState,
+            RecipeBookState smeltingRecipeBookState) {
+        this.craftingRecipeBookState = craftingRecipeBookState;
+        this.smeltingRecipeBookState = smeltingRecipeBookState;
+    }
+
+    public RecipeBookState getCraftingRecipeBookState() {
+        return this.craftingRecipeBookState;
+    }
+
+    public RecipeBookState getSmeltingRecipeBookState() {
+        return this.smeltingRecipeBookState;
+    }
 
     @Override
-    public Message decode(CodecContext context, ByteBuffer buf) throws CodecException {
-        final int type = buf.readVarInt();
-        if (type == 0) {
-            final int id = buf.readInteger();
-            return new MessagePlayInDisplayedRecipe(id);
-        } else if (type == 1) {
-            boolean open = buf.readBoolean();
-            boolean filter = buf.readBoolean();
-            final RecipeBookState crafting = new RecipeBookState(open, filter);
-            open = buf.readBoolean();
-            filter = buf.readBoolean();
-            final RecipeBookState smelting = new RecipeBookState(open, filter);
-            return new MessagePlayInRecipeBookStates(crafting, smelting);
-        }
-        return NullMessage.INSTANCE;
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("crafting", this.craftingRecipeBookState)
+                .add("smelting", this.smeltingRecipeBookState)
+                .toString();
     }
 }
