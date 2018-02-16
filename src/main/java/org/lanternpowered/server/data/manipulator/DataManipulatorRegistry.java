@@ -104,6 +104,7 @@ import org.spongepowered.api.data.manipulator.immutable.block.ImmutableRedstoneP
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableSlabPortionData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableSnowedData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableStairShapeData;
+import org.spongepowered.api.data.manipulator.immutable.block.ImmutableSurfaceAttachmentData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableWireAttachmentData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableAbsorptionData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableAffectsSpawningData;
@@ -244,6 +245,7 @@ import org.spongepowered.api.data.manipulator.mutable.block.RedstonePoweredData;
 import org.spongepowered.api.data.manipulator.mutable.block.SlabPortionData;
 import org.spongepowered.api.data.manipulator.mutable.block.SnowedData;
 import org.spongepowered.api.data.manipulator.mutable.block.StairShapeData;
+import org.spongepowered.api.data.manipulator.mutable.block.SurfaceAttachmentData;
 import org.spongepowered.api.data.manipulator.mutable.block.WireAttachmentData;
 import org.spongepowered.api.data.manipulator.mutable.entity.AbsorptionData;
 import org.spongepowered.api.data.manipulator.mutable.entity.AffectsSpawningData;
@@ -360,6 +362,7 @@ import org.spongepowered.api.data.type.RailDirections;
 import org.spongepowered.api.data.type.SlabPortions;
 import org.spongepowered.api.data.type.StairShapes;
 import org.spongepowered.api.data.type.StructureModes;
+import org.spongepowered.api.data.type.Surfaces;
 import org.spongepowered.api.data.type.WireAttachmentTypes;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.data.value.mutable.Value;
@@ -499,6 +502,8 @@ public class DataManipulatorRegistry {
                 c -> c.register(Keys.POWER, 0));
         register(SnowedData.class, ImmutableSnowedData.class,
                 c -> c.register(Keys.SNOWED, false));
+        register(SurfaceAttachmentData.class, ImmutableSurfaceAttachmentData.class,
+                c -> c.register(Keys.ATTACHMENT_SURFACE, Surfaces.FLOOR));
         register(WireAttachmentData.class, ImmutableWireAttachmentData.class, LanternWireAttachmentData.class, LanternImmutableWireAttachmentData.class,
                 c -> {
                     c.register(Keys.WIRE_ATTACHMENT_WEST, WireAttachmentTypes.NONE);

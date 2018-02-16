@@ -73,6 +73,7 @@ import org.lanternpowered.server.data.type.LanternHinge;
 import org.lanternpowered.server.data.type.LanternInstrumentType;
 import org.lanternpowered.server.data.type.LanternPortionType;
 import org.lanternpowered.server.data.type.LanternSlabPortion;
+import org.lanternpowered.server.data.type.LanternSurface;
 import org.lanternpowered.server.data.value.LanternValueFactory;
 import org.lanternpowered.server.effect.particle.LanternParticleEffectBuilder;
 import org.lanternpowered.server.effect.potion.LanternPotionEffectBuilder;
@@ -289,6 +290,8 @@ import org.spongepowered.api.data.type.RailDirection;
 import org.spongepowered.api.data.type.SkinPart;
 import org.spongepowered.api.data.type.SlabPortion;
 import org.spongepowered.api.data.type.SlabPortions;
+import org.spongepowered.api.data.type.Surface;
+import org.spongepowered.api.data.type.Surfaces;
 import org.spongepowered.api.data.type.ToolType;
 import org.spongepowered.api.data.type.TreeType;
 import org.spongepowered.api.data.value.ValueFactory;
@@ -534,14 +537,16 @@ public class LanternGameRegistry implements GameRegistry {
                         new EnumValueRegistryModule<ChestAttachmentType>(LanternChestAttachment.class, ChestAttachmentTypes.class) {})
                 .registerModule(LanternDoorHalf.class,
                         new EnumValueRegistryModule<LanternDoorHalf>(LanternDoorHalf.class, null) {})
+                .registerModule(ChestAttachmentType.class,
+                        new EnumValueRegistryModule<ChestAttachmentType>(LanternChestAttachment.class, ChestAttachmentTypes.class) {})
                 .registerModule(Art.class, new ArtRegistryModule())
                 .registerModule(Career.class, new CareerRegistryModule())
                 .registerModule(HandType.class, new HandTypeRegistryModule())
                 .registerModule(HandPreference.class, new HandPreferenceRegistryModule())
                 .registerModule(HorseColor.class, new HorseColorRegistryModule())
                 .registerModule(HorseStyle.class, new HorseStyleRegistryModule())
-                .registerModule(InstrumentType.class,
-                        new EnumValueRegistryModule<InstrumentType>(LanternInstrumentType.class, InstrumentTypes.class) {})
+                .registerModule(Surface.class,
+                        new EnumValueRegistryModule<Surface>(LanternSurface.class, Surfaces.class) {})
                 .registerModule(Hinge.class,
                         new EnumValueRegistryModule<Hinge>(LanternHinge.class, Hinges.class) {})
                 .registerModule(Key.class, KeyRegistryModule.get())

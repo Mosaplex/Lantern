@@ -69,6 +69,7 @@ import org.spongepowered.api.data.type.RailDirection;
 import org.spongepowered.api.data.type.SlabPortion;
 import org.spongepowered.api.data.type.StairShape;
 import org.spongepowered.api.data.type.StructureMode;
+import org.spongepowered.api.data.type.Surface;
 import org.spongepowered.api.data.type.WireAttachmentType;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectType;
@@ -150,6 +151,7 @@ public final class KeyRegistryModule extends AdditionalPluginCatalogRegistryModu
         register(makeValueKey(Boolean.class, of("Angry"), "angry"));
         register(makeValueKey(Art.class, of("Art"), "art"));
         register(makeValueKey(Boolean.class, of("Attached"), "attached"));
+        register(makeValueKey(Surface.class, of("AttachmentSurface"), "attachment_surface"));
         register(makeMutableBoundedValueKey(Double.class, of("AttackDamage"), "attack_damage"));
         register(makeValueKey(Axis.class, of("Axis"), "axis"));
         register(makeValueKey(DyeColor.class, of("BannerBaseColor"), "banner_base_color"));
