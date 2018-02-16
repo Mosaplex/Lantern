@@ -91,6 +91,7 @@ import org.spongepowered.api.data.manipulator.immutable.block.ImmutableFilledDat
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableGrowthData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableHingeData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableInWallData;
+import org.spongepowered.api.data.manipulator.immutable.block.ImmutableInstrumentData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableLayeredData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableLitData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableMoistureData;
@@ -232,6 +233,7 @@ import org.spongepowered.api.data.manipulator.mutable.block.FilledData;
 import org.spongepowered.api.data.manipulator.mutable.block.GrowthData;
 import org.spongepowered.api.data.manipulator.mutable.block.HingeData;
 import org.spongepowered.api.data.manipulator.mutable.block.InWallData;
+import org.spongepowered.api.data.manipulator.mutable.block.InstrumentData;
 import org.spongepowered.api.data.manipulator.mutable.block.LayeredData;
 import org.spongepowered.api.data.manipulator.mutable.block.LitData;
 import org.spongepowered.api.data.manipulator.mutable.block.MoistureData;
@@ -352,6 +354,7 @@ import org.spongepowered.api.data.type.HandPreferences;
 import org.spongepowered.api.data.type.Hinges;
 import org.spongepowered.api.data.type.HorseColors;
 import org.spongepowered.api.data.type.HorseStyles;
+import org.spongepowered.api.data.type.InstrumentTypes;
 import org.spongepowered.api.data.type.NotePitches;
 import org.spongepowered.api.data.type.OcelotTypes;
 import org.spongepowered.api.data.type.ParrotVariants;
@@ -502,8 +505,6 @@ public class DataManipulatorRegistry {
                 c -> c.register(Keys.POWER, 0));
         register(SnowedData.class, ImmutableSnowedData.class,
                 c -> c.register(Keys.SNOWED, false));
-        register(SurfaceAttachmentData.class, ImmutableSurfaceAttachmentData.class,
-                c -> c.register(Keys.ATTACHMENT_SURFACE, Surfaces.FLOOR));
         register(WireAttachmentData.class, ImmutableWireAttachmentData.class, LanternWireAttachmentData.class, LanternImmutableWireAttachmentData.class,
                 c -> {
                     c.register(Keys.WIRE_ATTACHMENT_WEST, WireAttachmentTypes.NONE);
@@ -517,10 +518,12 @@ public class DataManipulatorRegistry {
         registerVariant(ChestAttachmentData.class, ImmutableChestAttachmentData.class, Keys.CHEST_ATTACHMENT, ChestAttachmentTypes.NONE);
         registerVariant(ComparatorData.class, ImmutableComparatorData.class, Keys.COMPARATOR_TYPE, ComparatorTypes.COMPARE);
         registerVariant(HingeData.class, ImmutableHingeData.class, Keys.HINGE_POSITION, Hinges.LEFT);
+        registerVariant(InstrumentData.class, ImmutableInstrumentData.class, Keys.INSTRUMENT, InstrumentTypes.HARP);
         registerVariant(PortionData.class, ImmutablePortionData.class, Keys.PORTION_TYPE, PortionTypes.BOTTOM);
         registerVariant(RailDirectionData.class, ImmutableRailDirectionData.class, Keys.RAIL_DIRECTION, RailDirections.NORTH_SOUTH);
         registerVariant(SlabPortionData.class, ImmutableSlabPortionData.class, Keys.SLAB_PORTION, SlabPortions.BOTTOM);
         registerVariant(StairShapeData.class, ImmutableStairShapeData.class, Keys.STAIR_SHAPE, StairShapes.STRAIGHT);
+        registerVariant(SurfaceAttachmentData.class, ImmutableSurfaceAttachmentData.class, Keys.ATTACHMENT_SURFACE, Surfaces.FLOOR);
 
         /// list containers
 

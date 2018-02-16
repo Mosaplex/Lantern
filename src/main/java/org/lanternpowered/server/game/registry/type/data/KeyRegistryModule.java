@@ -58,6 +58,7 @@ import org.spongepowered.api.data.type.HandPreference;
 import org.spongepowered.api.data.type.Hinge;
 import org.spongepowered.api.data.type.HorseColor;
 import org.spongepowered.api.data.type.HorseStyle;
+import org.spongepowered.api.data.type.InstrumentType;
 import org.spongepowered.api.data.type.LlamaVariant;
 import org.spongepowered.api.data.type.NotePitch;
 import org.spongepowered.api.data.type.OcelotType;
@@ -249,6 +250,7 @@ public final class KeyRegistryModule extends AdditionalPluginCatalogRegistryModu
         register(makeValueKey(HorseStyle.class, of("HorseStyle"), "horse_style"));
         register(makeValueKey(Boolean.class, of("InfiniteDespawnDelay"), "infinite_despawn_delay"));
         register(makeValueKey(Boolean.class, of("InfinitePickupDelay"), "infinite_pickup_delay"));
+        register(makeValueKey(InstrumentType.class, of("Instrument"), "instrument"));
         register(makeValueKey(Boolean.class, of("InvisibilityIgnoresCollision"), "invisibility_ignores_collision"));
         register(makeValueKey(Boolean.class, of("InvisibilityPreventsTargeting"), "invisibility_prevents_targeting"));
         register(makeValueKey(Boolean.class, of("Invisible"), "invisible"));
