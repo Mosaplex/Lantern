@@ -537,8 +537,8 @@ public class LanternGameRegistry implements GameRegistry {
                         new EnumValueRegistryModule<ChestAttachmentType>(LanternChestAttachment.class, ChestAttachmentTypes.class) {})
                 .registerModule(LanternDoorHalf.class,
                         new EnumValueRegistryModule<LanternDoorHalf>(LanternDoorHalf.class, null) {})
-                .registerModule(ChestAttachmentType.class,
-                        new EnumValueRegistryModule<ChestAttachmentType>(LanternChestAttachment.class, ChestAttachmentTypes.class) {})
+                .registerModule(InstrumentType.class,
+                        new EnumValueRegistryModule<InstrumentType>(LanternInstrumentType.class, InstrumentType.class) {})
                 .registerModule(Art.class, new ArtRegistryModule())
                 .registerModule(Career.class, new CareerRegistryModule())
                 .registerModule(HandType.class, new HandTypeRegistryModule())

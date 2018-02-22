@@ -770,5 +770,17 @@
     {
         "version": 359,
         "name": "18w07b"
+    },
+    {
+        "version": 360,
+        "name": "18w07c"
+    },
+    {
+        "version": 361,
+        "name": "18w08a"
+    },
+    {
+        "version": 362,
+        "name": "18w08b"
     }
 ]

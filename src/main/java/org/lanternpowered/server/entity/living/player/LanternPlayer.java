@@ -374,6 +374,8 @@ public class LanternPlayer extends AbstractUser implements Player, AbstractViewe
                 // We just have to send this to prevent the client from crashing in some
                 // occasions, for example when clicking a furnace fuel slot.
                 // It's not used for anything else, so there aren't any arguments.
+                // Two messages, because only one does not work, it crashes the client...
+                this.session.send(new MessagePlayOutTags());
                 this.session.send(new MessagePlayOutTags());
                 // Send the player list
                 final List<LanternTabListEntry> tabListEntries = new ArrayList<>();
