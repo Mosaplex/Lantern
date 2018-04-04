@@ -481,10 +481,11 @@ public final class BlockRegistryModule extends AdditionalPluginCatalogRegistryMo
         ///   Powered Rail  ///
         ///////////////////////
         register(simpleBuilder()
-                .traits(LanternEnumTraits.STRAIGHT_RAIL_DIRECTION, LanternBooleanTraits.POWERED)
+                .traits(LanternEnumTraits.STRAIGHT_RAIL_DIRECTION, LanternBooleanTraits.POWERED, LanternBooleanTraits.WATERLOGGED)
                 .defaultState(state -> state
                         .withTrait(LanternEnumTraits.STRAIGHT_RAIL_DIRECTION, LanternRailDirection.NORTH_SOUTH).get()
-                        .withTrait(LanternBooleanTraits.POWERED, false).get())
+                        .withTrait(LanternBooleanTraits.POWERED, false).get()
+                        .withTrait(LanternBooleanTraits.WATERLOGGED, false).get())
                 .itemType()
                 .boundingBox(BoundingBoxes::rail)
                 .properties(builder -> builder
@@ -496,10 +497,11 @@ public final class BlockRegistryModule extends AdditionalPluginCatalogRegistryMo
         ///   Detector Rail  ///
         ////////////////////////
         register(simpleBuilder()
-                .traits(LanternEnumTraits.STRAIGHT_RAIL_DIRECTION, LanternBooleanTraits.POWERED)
+                .traits(LanternEnumTraits.STRAIGHT_RAIL_DIRECTION, LanternBooleanTraits.POWERED, LanternBooleanTraits.WATERLOGGED)
                 .defaultState(state -> state
                         .withTrait(LanternEnumTraits.STRAIGHT_RAIL_DIRECTION, LanternRailDirection.NORTH_SOUTH).get()
-                        .withTrait(LanternBooleanTraits.POWERED, false).get())
+                        .withTrait(LanternBooleanTraits.POWERED, false).get()
+                        .withTrait(LanternBooleanTraits.WATERLOGGED, false).get())
                 .itemType()
                 .boundingBox(BoundingBoxes::rail)
                 .properties(builder -> builder
@@ -934,8 +936,11 @@ public final class BlockRegistryModule extends AdditionalPluginCatalogRegistryMo
         ///  Ender Chest  ///
         /////////////////////
         register(simpleBuilder()
-                .trait(LanternEnumTraits.HORIZONTAL_FACING)
-                .defaultState(state -> state.withTrait(LanternEnumTraits.HORIZONTAL_FACING, Direction.NORTH).get())
+                .traits(LanternEnumTraits.HORIZONTAL_FACING,
+                        LanternBooleanTraits.WATERLOGGED)
+                .defaultState(state -> state
+                        .withTrait(LanternEnumTraits.HORIZONTAL_FACING, Direction.NORTH).get()
+                        .withTrait(LanternBooleanTraits.WATERLOGGED, false).get())
                 .itemType()
                 .tileEntityType(() -> TileEntityTypes.ENDER_CHEST)
                 .properties(builder -> builder
@@ -1049,23 +1054,23 @@ public final class BlockRegistryModule extends AdditionalPluginCatalogRegistryMo
         //////////////////
         /// Glass Pane ///
         //////////////////
-        register(glassBuilder().build("minecraft", "glass_pane"));
-        register(glassBuilder().build("minecraft", "white_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "orange_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "magenta_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "light_blue_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "yellow_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "lime_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "pink_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "gray_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "light_gray_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "cyan_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "purple_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "blue_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "brown_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "green_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "red_stained_glass_pane"));
-        register(glassBuilder().build("minecraft", "black_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "white_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "orange_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "magenta_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "light_blue_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "yellow_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "lime_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "pink_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "gray_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "light_gray_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "cyan_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "purple_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "blue_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "brown_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "green_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "red_stained_glass_pane"));
+        register(glassPaneBuilder().build("minecraft", "black_stained_glass_pane"));
         ////////////////////
         ///   Barrier    ///
         ////////////////////
@@ -1262,6 +1267,21 @@ public final class BlockRegistryModule extends AdditionalPluginCatalogRegistryMo
                         .add(blastResistance(1.5)));
     }
 
+    private BlockTypeBuilder glassPaneBuilder() {
+        return glassBuilder()
+                .traits(LanternBooleanTraits.CONNECTED_NORTH,
+                        LanternBooleanTraits.CONNECTED_SOUTH,
+                        LanternBooleanTraits.CONNECTED_EAST,
+                        LanternBooleanTraits.CONNECTED_WEST,
+                        LanternBooleanTraits.WATERLOGGED)
+                .defaultState(state -> state
+                        .withTrait(LanternBooleanTraits.CONNECTED_NORTH, false).get()
+                        .withTrait(LanternBooleanTraits.CONNECTED_SOUTH, false).get()
+                        .withTrait(LanternBooleanTraits.CONNECTED_EAST, false).get()
+                        .withTrait(LanternBooleanTraits.CONNECTED_WEST, false).get()
+                        .withTrait(LanternBooleanTraits.WATERLOGGED, false).get());
+    }
+
     private BlockTypeBuilder sandstoneBuilder() {
         return simpleBuilder()
                 .itemType()
@@ -1326,10 +1346,13 @@ public final class BlockRegistryModule extends AdditionalPluginCatalogRegistryMo
 
     private BlockTypeBuilder chestBuilder() {
         return builder()
-                .traits(LanternEnumTraits.CHEST_ATTACHMENT, LanternEnumTraits.HORIZONTAL_FACING)
+                .traits(LanternEnumTraits.CHEST_ATTACHMENT,
+                        LanternEnumTraits.HORIZONTAL_FACING,
+                        LanternBooleanTraits.WATERLOGGED)
                 .defaultState(state -> state
                         .withTrait(LanternEnumTraits.HORIZONTAL_FACING, Direction.NORTH).get()
-                        .withTrait(LanternEnumTraits.CHEST_ATTACHMENT, LanternChestAttachment.SINGLE).get())
+                        .withTrait(LanternEnumTraits.CHEST_ATTACHMENT, LanternChestAttachment.SINGLE).get()
+                        .withTrait(LanternBooleanTraits.WATERLOGGED, false).get())
                 .itemType()
                 .tileEntityType(() -> TileEntityTypes.CHEST)
                 .boundingBox(BoundingBoxes::doubleChest)
@@ -1370,10 +1393,11 @@ public final class BlockRegistryModule extends AdditionalPluginCatalogRegistryMo
 
     private BlockTypeBuilder slabBuilder() {
         return simpleBuilder()
-                .traits(LanternEnumTraits.SLAB_PORTION)
+                .traits(LanternEnumTraits.SLAB_PORTION, LanternBooleanTraits.WATERLOGGED)
                 .boundingBox(BoundingBoxes::slab)
                 .defaultState(state -> state
-                        .withTrait(LanternEnumTraits.SLAB_PORTION, LanternSlabPortion.BOTTOM).get())
+                        .withTrait(LanternEnumTraits.SLAB_PORTION, LanternSlabPortion.BOTTOM).get()
+                        .withTrait(LanternBooleanTraits.WATERLOGGED, false).get())
                 .itemType(builder -> builder
                         .behaviors(pipeline -> pipeline.add(new SlabItemInteractionBehavior())));
     }

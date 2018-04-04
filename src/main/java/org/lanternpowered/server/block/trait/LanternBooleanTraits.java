@@ -52,4 +52,14 @@ public final class LanternBooleanTraits {
     public static final BooleanTrait HAS_RECORD = LanternBooleanTrait.of("has_record", LanternKeys.HAS_RECORD);
 
     public static final BooleanTrait LIT = LanternBooleanTrait.of("lit", Keys.LIT);
+
+    public static final BooleanTrait WATERLOGGED = LanternBooleanTrait.of("waterlogged", LanternKeys.WATERLOGGED);
+
+    public static final BooleanTrait CONNECTED_NORTH = LanternBooleanTrait.of("north", LanternKeys.CONNECTED_NORTH);
+
+    public static final BooleanTrait CONNECTED_SOUTH = LanternBooleanTrait.of("south", LanternKeys.CONNECTED_SOUTH);
+
+    public static final BooleanTrait CONNECTED_EAST = LanternBooleanTrait.of("east", LanternKeys.CONNECTED_EAST);
+
+    public static final BooleanTrait CONNECTED_WEST = LanternBooleanTrait.of("west", LanternKeys.CONNECTED_WEST);
 }

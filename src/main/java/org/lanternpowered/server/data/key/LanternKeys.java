@@ -141,6 +141,8 @@ public final class LanternKeys {
             makeValueKey(Double.class, DataQuery.of("FieldOfViewModifier"), "field_of_view_modifier");
     public static final Key<Value<Boolean>> HAS_CHEST =
             makeValueKey(Boolean.class, DataQuery.of("HasChest"), "has_chest");
+    public static final Key<Value<Boolean>> WATERLOGGED =
+            makeValueKey(Boolean.class, DataQuery.of("Waterlogged"), "waterlogged");
 
     public static final Key<Value<Boolean>> DUMMY =
             makeValueKey(Boolean.class, DataQuery.of("Dummy"), "dummy");
@@ -156,6 +158,15 @@ public final class LanternKeys {
             makeValueKey(RedstoneConnectionType.class, DataQuery.of("RedstoneEastConnection"), "redstone_east_connection");
     public static final Key<Value<RedstoneConnectionType>> REDSTONE_WEST_CONNECTION =
             makeValueKey(RedstoneConnectionType.class, DataQuery.of("RedstoneWestConnection"), "redstone_west_connection");
+
+    public static final Key<Value<Boolean>> CONNECTED_NORTH =
+            makeValueKey(Boolean.class, DataQuery.of("ConnectedNorth"), "connected_north");
+    public static final Key<Value<Boolean>> CONNECTED_SOUTH =
+            makeValueKey(Boolean.class, DataQuery.of("ConnectedSouth"), "connected_south");
+    public static final Key<Value<Boolean>> CONNECTED_EAST =
+            makeValueKey(Boolean.class, DataQuery.of("ConnectedEast"), "connected_east");
+    public static final Key<Value<Boolean>> CONNECTED_WEST =
+            makeValueKey(Boolean.class, DataQuery.of("ConnectedWest"), "connected_west");
 
     private LanternKeys() {
     }

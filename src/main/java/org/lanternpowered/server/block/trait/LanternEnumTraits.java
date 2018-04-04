@@ -52,13 +52,13 @@ public final class LanternEnumTraits {
 
     public static final EnumTrait<Direction> FACING =
             LanternEnumTrait.of("facing", Keys.DIRECTION,
-                    Direction.DOWN, Direction.UP, Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST);
+                    Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.UP, Direction.DOWN);
 
     public static final EnumTrait<LanternSlabPortion> SLAB_PORTION =
             LanternEnumTrait.of("type", (Key) Keys.SLAB_PORTION, LanternSlabPortion.class);
 
     public static final EnumTrait<Direction> HOPPER_FACING =
-            LanternEnumTrait.of("variant", (Key) Keys.DIRECTION, Direction.DOWN, Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST);
+            LanternEnumTrait.of("variant", (Key) Keys.DIRECTION, Direction.DOWN, Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
 
     public static final EnumTrait<LanternRailDirection> STRAIGHT_RAIL_DIRECTION =
             LanternEnumTrait.of("shape", (Key) Keys.RAIL_DIRECTION, LanternRailDirection.class, type ->
