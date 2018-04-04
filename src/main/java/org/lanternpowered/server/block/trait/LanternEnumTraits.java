@@ -58,7 +58,7 @@ public final class LanternEnumTraits {
             LanternEnumTrait.of("type", (Key) Keys.SLAB_PORTION, LanternSlabPortion.class);
 
     public static final EnumTrait<Direction> HOPPER_FACING =
-            LanternEnumTrait.of("variant", (Key) Keys.DIRECTION, Direction.DOWN, Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
+            LanternEnumTrait.of("variant", (Key) Keys.DIRECTION, Direction.DOWN, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST);
 
     public static final EnumTrait<LanternRailDirection> STRAIGHT_RAIL_DIRECTION =
             LanternEnumTrait.of("shape", (Key) Keys.RAIL_DIRECTION, LanternRailDirection.class, type ->

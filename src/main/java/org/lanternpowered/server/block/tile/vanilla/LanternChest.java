@@ -57,8 +57,6 @@ import java.util.Set;
 
 public class LanternChest extends LanternContainerTile<ChestInventory> implements Chest {
 
-    private static final Direction[] HORIZONTAL_DIRECTIONS = { Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST };
-    
     public static final class DoubleChestInventory extends ChestInventory {
 
         @Override
@@ -76,9 +74,9 @@ public class LanternChest extends LanternContainerTile<ChestInventory> implement
         boolean left = connection == LanternChestAttachment.LEFT;
         switch (direction) {
             case NORTH:
-                return left ? Direction.WEST : Direction.EAST;
-            case SOUTH:
                 return left ? Direction.EAST : Direction.WEST;
+            case SOUTH:
+                return left ? Direction.WEST : Direction.EAST;
             case EAST:
                 return left ? Direction.SOUTH : Direction.NORTH;
             case WEST:
