@@ -55,7 +55,9 @@ public final class ShapedNetworkRecipe extends GroupedNetworkRecipe {
         super.write(buf);
         for (int j = 0; j < this.ingredients[0].length; j++) {
             for (int i = 0; i < this.ingredients.length; i++) {
-                for (ItemStack itemStack : this.ingredients[i][j]) {
+                final List<ItemStack> ingredient = this.ingredients[i][j];
+                buf.writeVarInt(ingredient.size());
+                for (ItemStack itemStack : ingredient) {
                     buf.write(Types.ITEM_STACK, itemStack);
                 }
             }

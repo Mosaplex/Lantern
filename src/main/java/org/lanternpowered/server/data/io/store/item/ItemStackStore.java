@@ -144,6 +144,13 @@ public final class ItemStackStore extends DataHolderStore<LanternItemStack> impl
         add(ItemTypes.LEATHER_CHESTPLATE, leatherSerializer);
         add(ItemTypes.LEATHER_HELMET, leatherSerializer);
         add(ItemTypes.LEATHER_LEGGINGS, leatherSerializer);
+        final ShulkerBoxItemObjectSerializer shulkerBoxSerializer = new ShulkerBoxItemObjectSerializer();
+        for (ItemType itemType : ItemRegistryModule.get().getAll()) {
+            if (itemType.getId().startsWith("minecraft:") &&
+                    itemType.getId().endsWith("shulker_box")) {
+                add(itemType, shulkerBoxSerializer);
+            }
+        }
     }
 
     private void add(ItemType itemType, ItemTypeObjectSerializer serializer) {

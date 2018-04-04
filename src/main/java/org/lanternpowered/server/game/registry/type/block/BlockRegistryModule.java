@@ -69,7 +69,6 @@ import org.lanternpowered.server.data.key.LanternKeys;
 import org.lanternpowered.server.data.type.LanternBedPart;
 import org.lanternpowered.server.data.type.LanternChestAttachment;
 import org.lanternpowered.server.data.type.LanternInstrumentType;
-import org.lanternpowered.server.data.type.LanternPortionType;
 import org.lanternpowered.server.data.type.LanternRailDirection;
 import org.lanternpowered.server.data.type.LanternSlabPortion;
 import org.lanternpowered.server.data.type.RedstoneConnectionType;
@@ -1107,6 +1106,7 @@ public final class BlockRegistryModule extends AdditionalPluginCatalogRegistryMo
         ///////////////////////
         ///  Shulker Boxes  ///
         ///////////////////////
+        register(shulkerBoxBuilder().build("minecraft", "shulker_box"));
         register(shulkerBoxBuilder().build("minecraft", "white_shulker_box"));
         register(shulkerBoxBuilder().build("minecraft", "orange_shulker_box"));
         register(shulkerBoxBuilder().build("minecraft", "magenta_shulker_box"));
