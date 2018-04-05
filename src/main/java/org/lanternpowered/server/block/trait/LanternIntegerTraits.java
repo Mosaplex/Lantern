@@ -39,8 +39,6 @@ public final class LanternIntegerTraits {
 
     public static final IntegerTrait MOISTURE = LanternIntegerTrait.ofRange("moisture", Keys.MOISTURE, 0, 7);
 
-    // TODO: Actually use the following states properly?
-
     public static final IntegerTrait NOTE = LanternIntegerTrait.ofRangeTransformed("note", Keys.NOTE_PITCH,
             new KeyTraitValueTransformer<Integer, NotePitch>() {
                 @Override

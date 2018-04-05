@@ -62,5 +62,6 @@ public class LanternBlockCarrier<T extends CarriedInventory<?>> extends Abstract
     @Override
     protected MoreObjects.ToStringHelper toStringHelper() {
         return super.toStringHelper()
-                .add("location", this.location); }
+                .add("location", this.location);
+    }
 }
