@@ -100,7 +100,7 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
     private final String id;
 
     // A internal id that is used for faster lookups
-    final int internalId;
+    private final int internalId;
 
     private final DataView serialized;
 
@@ -483,6 +483,20 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
         return ((LanternBlockState) blockState).serialized;
     }
 
+    /**
+     * Deserializes the {@link BlockState} from the format
+     * used by {@link BlockPalette} to store block states.
+     *
+     * {
+     *   Name: "minecraft:furnace",
+     *   Properties: {
+     *     "lit": "true"
+     *   }
+     * }
+     *
+     * @param dataView The data view to deserialize
+     * @return The deserialized block state
+     */
     public static BlockState deserialize(DataView dataView) {
         final String id = dataView.getString(NAME).get();
         final BlockType blockType = BlockRegistryModule.get().getById(id).get();
@@ -493,11 +507,15 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
             for (Map.Entry<DataQuery, Object> entry : properties.getValues(false).entrySet()) {
                 final BlockTrait trait = blockState.getTrait(entry.getKey().toString()).orElse(null);
                 if (trait != null) {
-                    // final Object value = trait.
+                    final Object value = trait.parseValue(entry.getValue().toString());
+                    final BlockState newState = blockState.withTrait(trait, value).orElse(null);
+                    if (newState != null) {
+                        blockState = newState;
+                    }
                 }
             }
         }
 
-        return blockType.getDefaultState();
+        return blockState;
     }
 }

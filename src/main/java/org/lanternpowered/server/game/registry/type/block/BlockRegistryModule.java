@@ -916,8 +916,7 @@ public final class BlockRegistryModule extends AdditionalPluginCatalogRegistryMo
         ///////////////////
         ///  Iron Bars  ///
         ///////////////////
-        register(simpleBuilder()
-                // TODO
+        register(paneBuilder(simpleBuilder())
                 .itemType()
                 .properties(builder -> builder
                         .add(hardness(5.0))
@@ -1268,7 +1267,11 @@ public final class BlockRegistryModule extends AdditionalPluginCatalogRegistryMo
     }
 
     private BlockTypeBuilder glassPaneBuilder() {
-        return glassBuilder()
+        return paneBuilder(glassBuilder());
+    }
+
+    public BlockTypeBuilder paneBuilder(BlockTypeBuilder builder) {
+        return builder
                 .traits(LanternBooleanTraits.CONNECTED_NORTH,
                         LanternBooleanTraits.CONNECTED_SOUTH,
                         LanternBooleanTraits.CONNECTED_EAST,
