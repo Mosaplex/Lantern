@@ -61,7 +61,7 @@ public final class VariableValueArray {
     }
 
     public int get(int index) {
-        this.checkIndex(index);
+        checkIndex(index);
 
         index *= this.bitsPerValue;
         int i0 = index >> 6;
@@ -78,7 +78,7 @@ public final class VariableValueArray {
     }
 
     public void set(int index, int value) {
-        this.checkIndex(index);
+        checkIndex(index);
 
         if (value < 0) {
             throw new IllegalArgumentException(String.format("value (%s) must not be negative", value));

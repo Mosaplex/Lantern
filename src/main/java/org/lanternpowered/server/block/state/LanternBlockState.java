@@ -30,7 +30,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
@@ -43,12 +42,15 @@ import org.lanternpowered.server.catalog.PluginCatalogType;
 import org.lanternpowered.server.data.IImmutableDataHolderBase;
 import org.lanternpowered.server.data.property.AbstractDirectionRelativePropertyHolder;
 import org.lanternpowered.server.data.value.mutable.LanternValue;
+import org.lanternpowered.server.game.registry.type.block.BlockRegistryModule;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.trait.BlockTrait;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
 import org.spongepowered.api.data.merge.MergeFunction;
@@ -58,6 +60,7 @@ import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.util.Cycleable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.schematic.BlockPalette;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,6 +76,9 @@ import java.util.function.Predicate;
 @SuppressWarnings({"rawtypes", "unchecked", "SuspiciousMethodCalls"})
 public final class LanternBlockState extends AbstractCatalogType implements PluginCatalogType, BlockState,
         AbstractDirectionRelativePropertyHolder, IImmutableDataHolderBase<BlockState> {
+
+    private static final DataQuery NAME = DataQuery.of("Name");
+    private static final DataQuery PROPERTIES = DataQuery.of("Properties");
 
     // A lookup table to get a specific state when you would change a value
     ImmutableTable<BlockTrait<?>, Comparable<?>, BlockState> propertyValueTable;
@@ -96,6 +102,8 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
     // A internal id that is used for faster lookups
     final int internalId;
 
+    private final DataView serialized;
+
     LanternBlockState(LanternBlockStateMap baseState, ImmutableMap<BlockTrait<?>, Comparable<?>> traitValues, int internalId) {
         this.traitValues = traitValues;
         this.baseState = baseState;
@@ -107,18 +115,30 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
         }
         this.keyToBlockTrait = builder.build();
 
+        // Serialize the block state
+        this.serialized = DataContainer.createNew(DataView.SafetyMode.NO_DATA_CLONED);
+        this.serialized.set(NAME, baseState.getBlockType().getId());
+
         final StringBuilder idBuilder = new StringBuilder();
         idBuilder.append(baseState.getBlockType().getId().substring(baseState.getBlockType().getPluginId().length() + 1));
         if (!traitValues.isEmpty()) {
+            final DataView serializedProperties = this.serialized.createView(PROPERTIES);
+
             idBuilder.append('[');
             final Joiner joiner = Joiner.on(',');
             final List<String> propertyValues = new ArrayList<>();
             for (Map.Entry<BlockTrait<?>, Comparable<?>> entry : traitValues.entrySet()) {
-                propertyValues.add(entry.getKey().getName() + "=" + entry.getValue().toString().toLowerCase(Locale.ENGLISH));
+                final String name = entry.getKey().getName();
+                final String value = entry.getValue().toString().toLowerCase(Locale.ENGLISH);
+                // Name generation
+                propertyValues.add(name + "=" + value);
+                // Serialized
+                serializedProperties.set(DataQuery.of(name), value);
             }
             idBuilder.append(joiner.join(propertyValues));
             idBuilder.append(']');
         }
+
         this.name = idBuilder.toString();
         this.id = baseState.getBlockType().getPluginId() + ':' + this.name;
     }
@@ -441,5 +461,43 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
     @Override
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * Serializes the {@link BlockState} into the format
+     * used by {@link BlockPalette} to store block states.
+     * <p>The serialized data view should be copied before
+     * modifying.
+     *
+     * {
+     *   Name: "minecraft:furnace",
+     *   Properties: {
+     *     "lit": "true"
+     *   }
+     * }
+     *
+     * @param blockState The block state to serialize
+     * @return The serialized block state
+     */
+    public static DataView serialize(BlockState blockState) {
+        return ((LanternBlockState) blockState).serialized;
+    }
+
+    public static BlockState deserialize(DataView dataView) {
+        final String id = dataView.getString(NAME).get();
+        final BlockType blockType = BlockRegistryModule.get().getById(id).get();
+
+        BlockState blockState = blockType.getDefaultState();
+        final DataView properties = dataView.getView(PROPERTIES).orElse(null);
+        if (properties != null) {
+            for (Map.Entry<DataQuery, Object> entry : properties.getValues(false).entrySet()) {
+                final BlockTrait trait = blockState.getTrait(entry.getKey().toString()).orElse(null);
+                if (trait != null) {
+                    // final Object value = trait.
+                }
+            }
+        }
+
+        return blockType.getDefaultState();
     }
 }
