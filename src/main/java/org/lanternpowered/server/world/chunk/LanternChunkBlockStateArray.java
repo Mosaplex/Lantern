@@ -181,7 +181,6 @@ public class LanternChunkBlockStateArray implements ChunkBlockStateArray {
         if (bits < 4) {
             bits = 4;
         }
-        this.bits = bits;
         if (bits <= 8) {
             // Should only happen once
             if (bits <= 4) {
@@ -190,7 +189,7 @@ public class LanternChunkBlockStateArray implements ChunkBlockStateArray {
                 this.internalPalette.assign(0, AIR);
             // Only upgrade if it isn't already upgraded to a MapBackedInternalPalette
             } else if (!(this.internalPalette instanceof MapBackedInternalPalette)) {
-                this.internalPalette = new MapBackedInternalPalette(bits);
+                this.internalPalette = new MapBackedInternalPalette((1 << this.bits) + 1);
                 // Air is always assigned to id 0
                 this.internalPalette.assign(0, AIR);
                 // Copy the old contents
@@ -205,6 +204,7 @@ public class LanternChunkBlockStateArray implements ChunkBlockStateArray {
             // Upgrade even more, just use the global palette
             this.internalPalette = GlobalInternalPalette.INSTANCE;
         }
+        this.bits = bits;
         final VariableValueArray oldStates = this.blockStates;
         this.blockStates = new VariableValueArray(bits, capacity);
         // Copy the states to the new array
@@ -239,7 +239,7 @@ public class LanternChunkBlockStateArray implements ChunkBlockStateArray {
     public void serializeTo(DataView dataView) {
         final int capacity = this.blockStates.getCapacity();
 
-        final MapBackedInternalPalette palette = new MapBackedInternalPalette(4);
+        final MapBackedInternalPalette palette = new MapBackedInternalPalette(16);
         // Air is always assigned to id 0
         palette.assign(0, AIR);
         int id = 1;
@@ -345,8 +345,7 @@ public class LanternChunkBlockStateArray implements ChunkBlockStateArray {
         private final List<BlockState> blockStates;
         private final Object2IntMap<BlockState> idByBlockState;
 
-        MapBackedInternalPalette(int bits) {
-            final int size = 1 << bits;
+        MapBackedInternalPalette(int size) {
             this.blockStates = new ArrayList<>(size);
             this.idByBlockState = new Object2IntOpenHashMap<>(size);
             this.idByBlockState.defaultReturnValue(INVALID_ID);
