@@ -507,10 +507,12 @@ public final class LanternBlockState extends AbstractCatalogType implements Plug
             for (Map.Entry<DataQuery, Object> entry : properties.getValues(false).entrySet()) {
                 final BlockTrait trait = blockState.getTrait(entry.getKey().toString()).orElse(null);
                 if (trait != null) {
-                    final Object value = trait.parseValue(entry.getValue().toString());
-                    final BlockState newState = blockState.withTrait(trait, value).orElse(null);
-                    if (newState != null) {
-                        blockState = newState;
+                    final Object value = trait.parseValue(entry.getValue().toString()).orElse(null);
+                    if (value != null) {
+                        final BlockState newState = blockState.withTrait(trait, value).orElse(null);
+                        if (newState != null) {
+                            blockState = newState;
+                        }
                     }
                 }
             }

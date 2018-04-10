@@ -234,19 +234,48 @@ public class LanternChunkBlockStateArray implements ChunkBlockStateArray {
         final List<BlockState> palette = dataView.getViewList(PALETTE_QUERY).get().stream()
                 .map(LanternBlockState::deserialize)
                 .collect(Collectors.toList());
-        int bits = BitHelper.requiredBits(palette.size() - 1);
-        if (bits <= 8) {
-            if (bits <= 4) {
-                bits = 4;
-                this.internalPalette = new ArrayBackedInternalPalette(bits);
+
+        // The bits that are assigned per value
+        final int bits = BitHelper.requiredBits(palette.size() - 1);
+
+        // The loaded variable value array
+        final VariableValueArray valueArray = new VariableValueArray(bits, CHUNK_SECTION_VOLUME, rawBlockStates);
+
+        // Load the palette
+        final InternalPalette internalPalette;
+
+        this.bits = bits;
+        if (this.bits <= 4) {
+            this.bits = 4; // Minimum 4 bits per value
+            internalPalette = new ArrayBackedInternalPalette(bits);
+        } else {
+            internalPalette = new MapBackedInternalPalette(palette.size());
+        }
+        for (int i = 0; i < palette.size(); i++) {
+            internalPalette.assign(i, palette.get(i));
+        }
+
+        if (this.bits <= 8) {
+            this.internalPalette = internalPalette;
+            this.assignedStates = this.internalPalette.getEntries().size();
+
+            if (this.bits != bits) {
+                this.blockStates = new VariableValueArray(this.bits, valueArray.getCapacity());
+                for (int i = 0; i < valueArray.getCapacity(); i++) {
+                    this.blockStates.set(i, valueArray.get(i));
+                }
             } else {
-                this.internalPalette = new MapBackedInternalPalette(palette.size());
+                this.blockStates = valueArray;
             }
-            for (int i = 0; i < palette.size(); i++) {
-                this.internalPalette.assign(i, palette.get(i));
+        } else {
+            this.internalPalette = GlobalInternalPalette.INSTANCE;
+            this.assignedStates = InternalIDRegistries.BLOCK_TYPE_IDS.size();
+
+            this.blockStates = new VariableValueArray(this.bits, valueArray.getCapacity());
+            for (int i = 0; i < valueArray.getCapacity(); i++) {
+                this.blockStates.set(i, this.internalPalette.get(internalPalette.get(valueArray.get(i))));
             }
         }
-        this.blockStates = new VariableValueArray(bits, CHUNK_SECTION_VOLUME, rawBlockStates);
     }
 
     private int getOrAssignState(BlockState state) {
@@ -368,7 +397,7 @@ public class LanternChunkBlockStateArray implements ChunkBlockStateArray {
         return this.blockStates;
     }
 
-    void serializeTo(DataView dataView) {
+    private void serializeTo(DataView dataView) {
         final int capacity = this.blockStates.getCapacity();
 
         final MapBackedInternalPalette palette = new MapBackedInternalPalette(16);
