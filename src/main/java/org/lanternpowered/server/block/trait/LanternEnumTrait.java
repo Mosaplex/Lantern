@@ -34,6 +34,7 @@ import org.spongepowered.api.block.trait.EnumTrait;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.mutable.Value;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 

@@ -23,20 +23,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.world.chunk;
+package org.lanternpowered.server.util;
 
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.world.schematic.BlockPalette;
+public class BitHelper {
 
-public interface ChunkBlockPalette extends BlockPalette {
-
-    /**
-     * Assigns multiple {@link BlockState}s at the same time.
-     * <p>Using this method has performance wise a benefit over
-     * calling {@link #getOrAssign(BlockState)} multiple times.
-     *
-     * @param blockStates The block states
-     * @return The assigned block ids
-     */
-    int[] getOrAssign(BlockState... blockStates);
+    public static int requiredBits(int value) {
+        for (int i = Integer.SIZE - 1; i >= 0; i--) {
+            if ((value >> i) != 0) {
+                return i + 1;
+            }
+        }
+        return 1; // 0 always needs one bit
+    }
 }

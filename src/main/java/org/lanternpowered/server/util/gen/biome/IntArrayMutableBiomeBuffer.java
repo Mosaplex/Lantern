@@ -44,20 +44,20 @@ import java.util.Arrays;
  * <p>Using {@link #detach()} the underlying short array can be accessed.
  * The short array can then be reused by calling {@link #reuse(Vector3i)}.</p>
  */
-public class ShortArrayMutableBiomeBuffer extends AbstractMutableBiomeBuffer {
+public class IntArrayMutableBiomeBuffer extends AbstractMutableBiomeBuffer {
 
     private boolean detached;
-    private final short[] biomes;
+    private final int[] biomes;
 
     protected void checkOpen() {
         checkState(!this.detached, "Trying to use buffer after it's closed!");
     }
 
-    public ShortArrayMutableBiomeBuffer(Vector3i start, Vector3i size) {
-        this(new short[size.getX() * size.getY() * size.getZ()], start, size);
+    public IntArrayMutableBiomeBuffer(Vector3i start, Vector3i size) {
+        this(new int[size.getX() * size.getY() * size.getZ()], start, size);
     }
 
-    public ShortArrayMutableBiomeBuffer(short[] biomes, Vector3i start, Vector3i size) {
+    public IntArrayMutableBiomeBuffer(int[] biomes, Vector3i start, Vector3i size) {
         super(start, size);
         this.biomes = biomes;
     }
@@ -82,7 +82,7 @@ public class ShortArrayMutableBiomeBuffer extends AbstractMutableBiomeBuffer {
      *
      * @return The internal byte array.
      */
-    public short[] detach() {
+    public int[] detach() {
         checkOpen();
         this.detached = true;
         return this.biomes;
@@ -119,9 +119,9 @@ public class ShortArrayMutableBiomeBuffer extends AbstractMutableBiomeBuffer {
         checkOpen();
         switch (type) {
             case STANDARD:
-                return new ShortArrayMutableBiomeBuffer(this.biomes.clone(), this.start, this.size);
+                return new IntArrayMutableBiomeBuffer(this.biomes.clone(), this.start, this.size);
             case THREAD_SAFE:
-                return new AtomicShortArrayMutableBiomeBuffer(this.biomes, this.start, this.size);
+                return new AtomicIntArrayMutableBiomeBuffer(this.biomes, this.start, this.size);
             default:
                 throw new UnsupportedOperationException(type.name());
         }
@@ -130,6 +130,6 @@ public class ShortArrayMutableBiomeBuffer extends AbstractMutableBiomeBuffer {
     @Override
     public ImmutableBiomeVolume getImmutableBiomeCopy() {
         checkOpen();
-        return new ShortArrayImmutableBiomeBuffer(this.biomes, this.start, this.size);
+        return new IntArrayImmutableBiomeBuffer(this.biomes, this.start, this.size);
     }
 }

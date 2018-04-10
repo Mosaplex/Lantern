@@ -33,17 +33,17 @@ import org.spongepowered.api.world.extent.ImmutableBlockVolume;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
 import org.spongepowered.api.world.extent.StorageType;
 
-public class ShortArrayImmutableBlockBuffer extends AbstractImmutableBlockBuffer {
+public class IntArrayImmutableBlockBuffer extends AbstractImmutableBlockBuffer {
 
     private final BlockState air = BlockTypes.AIR.getDefaultState();
-    private final short[] blocks;
+    private final int[] blocks;
 
-    public ShortArrayImmutableBlockBuffer(short[] blocks, Vector3i start, Vector3i size) {
+    public IntArrayImmutableBlockBuffer(int[] blocks, Vector3i start, Vector3i size) {
         super(start, size);
         this.blocks = blocks.clone();
     }
 
-    private ShortArrayImmutableBlockBuffer(Vector3i start, Vector3i size, short[] blocks) {
+    private IntArrayImmutableBlockBuffer(Vector3i start, Vector3i size, int[] blocks) {
         super(start, size);
         this.blocks = blocks;
     }
@@ -51,18 +51,17 @@ public class ShortArrayImmutableBlockBuffer extends AbstractImmutableBlockBuffer
     @Override
     public BlockState getBlock(int x, int y, int z) {
         checkRange(x, y, z);
-        short blockState = this.blocks[index(x, y, z)];
-        BlockState block = BlockRegistryModule.get().getStateByInternalId(blockState).orElse(BlockTypes.AIR.getDefaultState());
-        return block == null ? this.air : block;
+        final int blockState = this.blocks[index(x, y, z)];
+        return BlockRegistryModule.get().getStateByInternalId(blockState).orElse(this.air);
     }
 
     @Override
     public MutableBlockVolume getBlockCopy(StorageType type) {
         switch (type) {
             case STANDARD:
-                return new ShortArrayMutableBlockBuffer(this.blocks.clone(), this.start, this.size);
+                return new IntArrayMutableBlockBuffer(this.blocks.clone(), this.start, this.size);
             case THREAD_SAFE:
-                return new AtomicShortArrayMutableBlockBuffer(this.blocks, this.start, this.size);
+                return new AtomicIntArrayMutableBlockBuffer(this.blocks, this.start, this.size);
             default:
                 throw new UnsupportedOperationException(type.name());
         }
@@ -77,7 +76,7 @@ public class ShortArrayImmutableBlockBuffer extends AbstractImmutableBlockBuffer
      * @param size The size of the volume
      * @return A new buffer using the same array reference
      */
-    public static ImmutableBlockVolume newWithoutArrayClone(short[] blocks, Vector3i start, Vector3i size) {
-        return new ShortArrayImmutableBlockBuffer(start, size, blocks);
+    public static ImmutableBlockVolume newWithoutArrayClone(int[] blocks, Vector3i start, Vector3i size) {
+        return new IntArrayImmutableBlockBuffer(start, size, blocks);
     }
 }

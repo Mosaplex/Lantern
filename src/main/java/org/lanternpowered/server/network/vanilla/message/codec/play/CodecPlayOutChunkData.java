@@ -44,7 +44,7 @@ public final class CodecPlayOutChunkData implements Codec<MessagePlayOutChunkDat
     @Override
     public ByteBuffer encode(CodecContext context, MessagePlayOutChunkData message) throws CodecException {
         final MessagePlayOutChunkData.Section[] sections = message.getSections();
-        final short[] biomes = message.getBiomes();
+        final int[] biomes = message.getBiomes();
         final int x = message.getX();
         final int z = message.getZ();
 

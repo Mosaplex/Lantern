@@ -27,26 +27,28 @@ package org.lanternpowered.server.util.gen.block;
 
 import com.flowpowered.math.vector.Vector3i;
 import org.lanternpowered.server.game.registry.type.block.BlockRegistryModule;
-import org.lanternpowered.server.util.collect.array.concurrent.AtomicShortArray;
+import org.lanternpowered.server.util.collect.array.concurrent.AtomicIntegerArrayHelper;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.extent.ImmutableBlockVolume;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
 import org.spongepowered.api.world.extent.StorageType;
 
-public class AtomicShortArrayMutableBlockBuffer extends AbstractMutableBlockBuffer implements MutableBlockVolume {
+import java.util.concurrent.atomic.AtomicIntegerArray;
+
+public class AtomicIntArrayMutableBlockBuffer extends AbstractMutableBlockBuffer implements MutableBlockVolume {
 
     private final BlockState air = BlockTypes.AIR.getDefaultState();
-    private final AtomicShortArray blocks;
+    private final AtomicIntegerArray blocks;
 
-    public AtomicShortArrayMutableBlockBuffer(Vector3i start, Vector3i size) {
+    public AtomicIntArrayMutableBlockBuffer(Vector3i start, Vector3i size) {
         super(start, size);
-        this.blocks = new AtomicShortArray(size.getX() * size.getY() * size.getZ());
+        this.blocks = new AtomicIntegerArray(size.getX() * size.getY() * size.getZ());
     }
 
-    public AtomicShortArrayMutableBlockBuffer(short[] blocks, Vector3i start, Vector3i size) {
+    public AtomicIntArrayMutableBlockBuffer(int[] blocks, Vector3i start, Vector3i size) {
         super(start, size);
-        this.blocks = new AtomicShortArray(blocks);
+        this.blocks = new AtomicIntegerArray(blocks);
     }
 
     @Override
@@ -59,18 +61,18 @@ public class AtomicShortArrayMutableBlockBuffer extends AbstractMutableBlockBuff
     @Override
     public BlockState getBlock(int x, int y, int z) {
         checkRange(x, y, z);
-        final short blockState = this.blocks.get(index(x, y, z));
-        final BlockState block = BlockRegistryModule.get().getStateByInternalId(blockState).orElse(null);
-        return block == null ? this.air : block;
+        final int blockState = this.blocks.get(index(x, y, z));
+        return BlockRegistryModule.get().getStateByInternalId(blockState).orElse(this.air);
     }
 
     @Override
     public MutableBlockVolume getBlockCopy(StorageType type) {
+        final int[] intArray = AtomicIntegerArrayHelper.toArray(this.blocks);
         switch (type) {
             case STANDARD:
-                return new ShortArrayMutableBlockBuffer(this.blocks.getArray(), this.start, this.size);
+                return new IntArrayMutableBlockBuffer(intArray, this.start, this.size);
             case THREAD_SAFE:
-                return new AtomicShortArrayMutableBlockBuffer(this.blocks.getArray(), this.start, this.size);
+                return new AtomicIntArrayMutableBlockBuffer(intArray, this.start, this.size);
             default:
                 throw new UnsupportedOperationException(type.name());
         }
@@ -78,6 +80,6 @@ public class AtomicShortArrayMutableBlockBuffer extends AbstractMutableBlockBuff
 
     @Override
     public ImmutableBlockVolume getImmutableBlockCopy() {
-        return ShortArrayImmutableBlockBuffer.newWithoutArrayClone(this.blocks.getArray(), this.start, this.size);
+        return IntArrayImmutableBlockBuffer.newWithoutArrayClone(AtomicIntegerArrayHelper.toArray(this.blocks), this.start, this.size);
     }
 }

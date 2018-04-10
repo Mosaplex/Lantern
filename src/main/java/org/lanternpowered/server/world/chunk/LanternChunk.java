@@ -27,6 +27,7 @@ package org.lanternpowered.server.world.chunk;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.lanternpowered.server.world.chunk.ChunkBlockStateArray.AIR_ID;
 import static org.lanternpowered.server.world.chunk.LanternChunkLayout.CHUNK_BIOME_VOLUME;
 import static org.lanternpowered.server.world.chunk.LanternChunkLayout.CHUNK_MASK;
 import static org.lanternpowered.server.world.chunk.LanternChunkLayout.CHUNK_SIZE;
@@ -41,8 +42,6 @@ import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.shorts.Short2ShortMap;
-import it.unimi.dsi.fastutil.shorts.Short2ShortOpenHashMap;
 import org.lanternpowered.server.block.LanternBlockSnapshot;
 import org.lanternpowered.server.block.LanternBlockType;
 import org.lanternpowered.server.block.LanternScheduledBlockUpdate;
@@ -59,11 +58,10 @@ import org.lanternpowered.server.entity.LanternEntity;
 import org.lanternpowered.server.entity.LanternEntityType;
 import org.lanternpowered.server.event.CauseStack;
 import org.lanternpowered.server.game.Lantern;
-import org.lanternpowered.server.game.registry.type.block.BlockRegistryModule;
 import org.lanternpowered.server.game.registry.type.world.biome.BiomeRegistryModule;
 import org.lanternpowered.server.util.VecHelper;
-import org.lanternpowered.server.util.collect.Collections3;
 import org.lanternpowered.server.util.collect.array.NibbleArray;
+import org.lanternpowered.server.util.collect.array.VariableValueArray;
 import org.lanternpowered.server.world.LanternWorld;
 import org.lanternpowered.server.world.TrackerIdAllocator;
 import org.lanternpowered.server.world.extent.AbstractExtent;
@@ -176,13 +174,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
         /**
          * The block types array.
          */
-        final short[] types;
-
-        /**
-         * The amount of blocks per block type/state in
-         * this chunk section.
-         */
-        final Short2ShortMap typesCountMap = new Short2ShortOpenHashMap();
+        final ChunkBlockStateArray blocks;
 
         /**
          * The light level arrays.
@@ -201,25 +193,24 @@ public class LanternChunk implements AbstractExtent, Chunk {
             this(null);
         }
 
-        ChunkSection(@Nullable short[] types) {
-            if (types != null) {
-                checkArgument(types.length == CHUNK_SECTION_VOLUME, "Type array length mismatch: Got "
-                        + types.length + ", but expected " + CHUNK_SECTION_VOLUME);
-                this.types = new short[CHUNK_SECTION_VOLUME];
-                System.arraycopy(types, 0, this.types, 0, CHUNK_SECTION_VOLUME);
+        ChunkSection(@Nullable ChunkBlockStateArray blocks) {
+            if (blocks != null) {
+                checkArgument(blocks.getCapacity() == CHUNK_SECTION_VOLUME, "Blocks array length mismatch: Got "
+                        + blocks.getCapacity() + ", but expected " + CHUNK_SECTION_VOLUME);
+                this.blocks = blocks;
                 recountTypes();
             } else {
-                this.types = new short[CHUNK_SECTION_VOLUME];
+                this.blocks = new LanternChunkBlockStateArray(CHUNK_SECTION_VOLUME);
             }
             this.tileEntities = new Short2ObjectOpenHashMap<>();
             this.lightFromBlock = new NibbleArray(CHUNK_SECTION_VOLUME);
             this.lightFromSky = new NibbleArray(CHUNK_SECTION_VOLUME);
         }
 
-        public ChunkSection(short[] types, NibbleArray lightFromSky, NibbleArray lightFromBlock,
+        public ChunkSection(ChunkBlockStateArray blocks, NibbleArray lightFromSky, NibbleArray lightFromBlock,
                 Short2ObjectMap<LanternTileEntity> tileEntities) {
-            checkArgument(types.length == CHUNK_SECTION_VOLUME, "Type array length mismatch: Got "
-                    + types.length + ", but expected " + CHUNK_SECTION_VOLUME);
+            checkArgument(blocks.getCapacity() == CHUNK_SECTION_VOLUME, "Type array length mismatch: Got "
+                    + blocks.getCapacity() + ", but expected " + CHUNK_SECTION_VOLUME);
             checkArgument(lightFromSky.length() == CHUNK_SECTION_VOLUME, "Sky light nibble array length mismatch: Got "
                     + lightFromSky.length() + ", but expected " + CHUNK_SECTION_VOLUME);
             checkArgument(lightFromSky.length() == CHUNK_SECTION_VOLUME, "Block light nibble array length mismatch: Got "
@@ -227,7 +218,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
             this.lightFromBlock = lightFromBlock;
             this.lightFromSky = lightFromSky;
             this.tileEntities = tileEntities;
-            this.types = types;
+            this.blocks = blocks;
 
             // Count the non air blocks.
             recountTypes();
@@ -250,46 +241,37 @@ public class LanternChunk implements AbstractExtent, Chunk {
          */
         private void recountTypes() {
             this.nonAirCount = 0;
-            this.typesCountMap.clear();
-            for (short type : this.types) {
-                if (type != 0) {
+            final VariableValueArray states = this.blocks.getStates();
+            for (int i = 0; i < this.blocks.getCapacity(); i++) {
+                if (states.get(i) != AIR_ID) {
                     this.nonAirCount++;
-                    this.typesCountMap.put(type, (short) (this.typesCountMap.get(type) + 1));
                 }
             }
         }
 
         private ChunkSectionSnapshot asSnapshot(boolean skylight) {
-            final Short2ShortMap typeCounts = new Short2ShortOpenHashMap(this.typesCountMap);
-            final int count = this.types.length - this.nonAirCount;
-            if (count > 0) {
-                typeCounts.put((short) 0, (short) count);
-            }
-            return new ChunkSectionSnapshot(this.types.clone(), typeCounts, new Short2ObjectOpenHashMap<>(this.tileEntities),
+            return new ChunkSectionSnapshot(this.blocks.copy(), new Short2ObjectOpenHashMap<>(this.tileEntities),
                     this.lightFromBlock.getPackedArray(), skylight ? this.lightFromSky.getPackedArray() : null);
         }
     }
 
     public static class ChunkSectionSnapshot {
 
-        // The block types array.
-        public final short[] types;
-        // The types count map.
-        public final Short2ShortMap typesCountMap;
+        // The block types array
+        public final ChunkBlockStateArray blockStates;
         // The tile entities
         public final Short2ObjectMap<LanternTileEntity> tileEntities;
 
-        // The light level arrays.
+        // The light level arrays
         @Nullable public final byte[] lightFromSky;
         public final byte[] lightFromBlock;
 
-        private ChunkSectionSnapshot(short[] types, Short2ShortMap typesCountMap, Short2ObjectMap<LanternTileEntity> tileEntities,
+        private ChunkSectionSnapshot(ChunkBlockStateArray blockStates, Short2ObjectMap<LanternTileEntity> tileEntities,
                 byte[] lightFromBlock, @Nullable byte[] lightFromSky) {
-            this.tileEntities = tileEntities;
             this.lightFromBlock = lightFromBlock;
-            this.typesCountMap = typesCountMap;
             this.lightFromSky = lightFromSky;
-            this.types = types;
+            this.tileEntities = tileEntities;
+            this.blockStates = blockStates;
         }
     }
 
@@ -318,7 +300,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
     private final StampedLock heightMapLock = new StampedLock();
 
     // The biomes array
-    private short[] biomes;
+    private int[] biomes;
 
     // The lock for the biomes array
     private final StampedLock biomesLock = new StampedLock();
@@ -452,7 +434,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
         }
         this.heightMap = new byte[CHUNK_AREA];
         this.chunkSections = new ConcurrentObjectArray<>(new ChunkSection[CHUNK_SECTIONS]);
-        this.biomes = new short[CHUNK_AREA];
+        this.biomes = new int[CHUNK_AREA];
         this.loaded = true;
     }
 
@@ -475,7 +457,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
      *
      * @param biomes the biomes
      */
-    public void initializeBiomes(short[] biomes) {
+    public void initializeBiomes(int[] biomes) {
         checkArgument(biomes.length == CHUNK_AREA, "Biomes array length mismatch: Got "
                 + biomes.length + ", but expected " + CHUNK_AREA);
         this.biomes = biomes;
@@ -603,7 +585,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
                         // Loop down in the section until we may find a
                         // non empty block
                         while (--y >= 0) {
-                            if (section.types[(y << 8) | index] != 0) {
+                            if (section.blocks.getStates().get((y << 8) | index) != AIR_ID) {
                                 values0[0] = j << 4 | y;
                                 values1[0] = true;
                                 break;
@@ -677,7 +659,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
                         // Loop down in the section until we may find a
                         // non empty block
                         while (--y >= 0) {
-                            if (section.types[(y << 8) | index] != 0) {
+                            if (section.blocks.getStates().get((y << 8) | index) != AIR_ID) {
                                 finished[index] = true;
                                 heightMap[index] = (byte) y;
                                 if (++values0[0] >= CHUNK_AREA) {
@@ -745,9 +727,9 @@ public class LanternChunk implements AbstractExtent, Chunk {
      *
      * @return The biomes
      */
-    public short[] getBiomes() {
+    public int[] getBiomes() {
         long stamp = this.biomesLock.tryOptimisticRead();
-        short[] biomes = stamp == 0L ? null : this.biomes.clone();
+        int[] biomes = stamp == 0L ? null : this.biomes.clone();
         if (biomes == null || !this.biomesLock.validate(stamp)) {
             stamp = this.biomesLock.readLock();
             try {
@@ -764,7 +746,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
      *
      * @param biomes the biomes
      */
-    public void setBiomes(short[] biomes) {
+    public void setBiomes(int[] biomes) {
         checkArgument(biomes.length == CHUNK_AREA, "Biomes array length mismatch: Got "
                 + biomes.length + ", but expected " + CHUNK_AREA);
         biomes = biomes.clone();
@@ -783,14 +765,14 @@ public class LanternChunk implements AbstractExtent, Chunk {
      * @param z the z coordinate
      * @return the biome value
      */
-    public short getBiomeId(int x, int y, int z) {
+    public int getBiomeId(int x, int y, int z) {
         checkBiomeBounds(x, y, z);
         if (!this.loaded) {
             return 0;
         }
         final int index = (z & 0xf) << 4 | x & 0xf;
         long stamp = this.biomesLock.tryOptimisticRead();
-        short biome = this.biomes[index];
+        int biome = this.biomes[index];
         if (!this.biomesLock.validate(stamp)) {
             stamp = this.biomesLock.readLock();
             try {
@@ -823,28 +805,17 @@ public class LanternChunk implements AbstractExtent, Chunk {
         }
     }
 
-    public short getState(Vector3i coordinates) {
-        return getState(coordinates.getX(), coordinates.getY(), coordinates.getZ());
-    }
-
-    /**
-     * Gets the type of the block at the coordinates.
-     * 
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z coordinate
-     * @return the block type
-     */
-    public short getState(int x, int y, int z) {
+    @Override
+    public BlockState getBlock(int x, int y, int z) {
         checkVolumeBounds(x, y, z);
         if (!this.loaded) {
-            return 0;
+            return BlockTypes.AIR.getDefaultState();
         }
         return this.chunkSections.work(y >> 4, section -> {
             if (section != null) {
-                return section.types[ChunkSection.index(x & 0xf, y & 0xf, z & 0xf)];
+                return section.blocks.get(ChunkSection.index(x & 0xf, y & 0xf, z & 0xf));
             }
-            return (short) 0;
+            return BlockTypes.AIR.getDefaultState();
         }, false);
     }
 
@@ -854,16 +825,16 @@ public class LanternChunk implements AbstractExtent, Chunk {
     }
 
     @Override
-    public boolean setBlock(int x, int y, int z, BlockState block, BlockChangeFlag flag) {
-        checkNotNull(block, "block");
+    public boolean setBlock(int x, int y, int z, BlockState state, BlockChangeFlag flag) {
+        checkNotNull(state, "blockState");
         checkNotNull(flag, "flag");
         checkVolumeBounds(x, y, z);
         if (!this.loaded) {
             return false;
         }
 
-        final short state = (short) BlockRegistryModule.get().getStateInternalId(block);
         final BlockState[] changeData = new BlockState[1];
+        final boolean air = state.getType() == BlockTypes.AIR;
 
         final int rx = x & 0xf;
         final int rz = z & 0xf;
@@ -871,37 +842,27 @@ public class LanternChunk implements AbstractExtent, Chunk {
             if (section == null) {
                 // The section is already filled with air,
                 // so we can fail fast
-                if (state == 0) {
+                if (air) {
                     return null;
                 }
                 // Create a new section
                 section = new ChunkSection();
             }
             final int index = ChunkSection.index(rx, y & 0xf, rz);
-            final short oldState = section.types[index];
-            if (oldState == state) {
+            final BlockState oldState = section.blocks.set(index, state);
+            // Nothing changed, fail fast
+            if (state == oldState) {
                 return section;
             }
-            if (oldState != 0) {
-                short count = section.typesCountMap.get(oldState);
-                if (count > 0) {
-                    if (--count <= 0) {
-                        section.typesCountMap.remove(oldState);
-                    } else {
-                        section.typesCountMap.put(oldState, count);
-                    }
-                }
-            }
-            if (state != 0) {
-                section.typesCountMap.put(state, (short) (section.typesCountMap.get(state) + 1));
-                if (oldState == 0) {
+            final boolean oldAir = oldState.getType() == BlockTypes.AIR;
+            if (oldAir != air) {
+                if (air) {
+                    section.nonAirCount--;
+                } else {
                     section.nonAirCount++;
                 }
-            } else {
-                section.nonAirCount--;
             }
-            final BlockState oldBlockState = BlockRegistryModule.get().getStateByInternalId(oldState).get();
-            changeData[0] = oldBlockState;
+            changeData[0] = oldState;
             // The section is empty, destroy it
             if (section.nonAirCount <= 0) {
                 return null;
@@ -909,9 +870,9 @@ public class LanternChunk implements AbstractExtent, Chunk {
             final LanternTileEntity tileEntity = section.tileEntities.get((short) index);
             boolean remove = false;
             boolean refresh = false;
-            final Optional<TileEntityProvider> tileEntityProvider = ((LanternBlockType) block.getType()).getTileEntityProvider();
+            final Optional<TileEntityProvider> tileEntityProvider = ((LanternBlockType) state.getType()).getTileEntityProvider();
             if (tileEntity != null) {
-                if (oldBlockState.getType() != block.getType()) {
+                if (oldState.getType() != state.getType()) {
                     refresh = tileEntityProvider.isPresent();
                     remove = true;
                 }
@@ -923,14 +884,13 @@ public class LanternChunk implements AbstractExtent, Chunk {
             }
             if (refresh) {
                 final Location<World> location = tileEntity != null ? tileEntity.getLocation() : new Location<>(this.world, x, y, z);
-                final LanternTileEntity newTileEntity = (LanternTileEntity) tileEntityProvider.get().get(block, location, null);
+                final LanternTileEntity newTileEntity = (LanternTileEntity) tileEntityProvider.get().get(state, location, null);
                 section.tileEntities.put((short) index, newTileEntity);
                 newTileEntity.setLocation(location);
                 newTileEntity.setValid(true);
             } else if (remove) {
                 section.tileEntities.remove((short) index);
             }
-            section.types[index] = state;
             return section;
         });
 
@@ -938,10 +898,10 @@ public class LanternChunk implements AbstractExtent, Chunk {
         long stamp = this.heightMapLock.writeLock();
         try {
             // TODO: Check first and then use the write lock?
-            if (state != 0 && (this.heightMap[index] & 0xff) < y) {
+            if (!air && (this.heightMap[index] & 0xff) < y) {
                 this.heightMap[index] = (byte) y;
                 this.heightMapUpdateFlags.clear(index);
-            } else if (state == 0 && (this.heightMap[index] & 0xff) == y) {
+            } else if (air && (this.heightMap[index] & 0xff) == y) {
                 this.heightMapUpdateFlags.set(index);
             }
         } finally {
@@ -949,7 +909,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
         }
 
         if (changeData[0] != null) {
-            this.world.getEventListener().onBlockChange(x, y, z, changeData[0], block);
+            this.world.getEventListener().onBlockChange(x, y, z, changeData[0], state);
         }
 
         return true;
@@ -1505,11 +1465,6 @@ public class LanternChunk implements AbstractExtent, Chunk {
     @Override
     public boolean containsBlock(int x, int y, int z) {
         return VecHelper.inBounds(x, y, z, this.min, this.max);
-    }
-
-    @Override
-    public BlockState getBlock(int x, int y, int z) {
-        return BlockRegistryModule.get().getStateByInternalId(getState(x, y, z)).orElse(BlockTypes.AIR.getDefaultState());
     }
 
     @Override

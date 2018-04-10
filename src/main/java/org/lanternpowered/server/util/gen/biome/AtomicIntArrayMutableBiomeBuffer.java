@@ -27,58 +27,59 @@ package org.lanternpowered.server.util.gen.biome;
 
 import com.flowpowered.math.vector.Vector3i;
 import org.lanternpowered.server.game.registry.type.world.biome.BiomeRegistryModule;
+import org.lanternpowered.server.util.collect.array.concurrent.AtomicIntegerArrayHelper;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 import org.spongepowered.api.world.extent.ImmutableBiomeVolume;
 import org.spongepowered.api.world.extent.MutableBiomeVolume;
 import org.spongepowered.api.world.extent.StorageType;
 
+import java.util.concurrent.atomic.AtomicIntegerArray;
+
 /**
- * Immutable biome volume, backed by a short array. The array passed to the
- * constructor is copied to ensure that the instance is immutable.
+ * Mutable biome volume backed by a atomic short array.
  */
-public final class ShortArrayImmutableBiomeBuffer extends AbstractImmutableBiomeBuffer {
+public final class AtomicIntArrayMutableBiomeBuffer extends AbstractMutableBiomeBuffer {
 
-    private final short[] biomes;
+    private final AtomicIntegerArray biomes;
 
-    public ShortArrayImmutableBiomeBuffer(short[] biomes, Vector3i start, Vector3i size) {
+    public AtomicIntArrayMutableBiomeBuffer(Vector3i start, Vector3i size) {
         super(start, size);
-        this.biomes = biomes.clone();
+        this.biomes = new AtomicIntegerArray(size.getX() * size.getY() * size.getZ());
     }
 
-    private ShortArrayImmutableBiomeBuffer(Vector3i start, Vector3i size, short[] biomes) {
+    public AtomicIntArrayMutableBiomeBuffer(int[] biomes, Vector3i start, Vector3i size) {
         super(start, size);
-        this.biomes = biomes;
+        this.biomes = new AtomicIntegerArray(biomes);
+    }
+
+    @Override
+    public void setBiome(int x, int y, int z, BiomeType biome) {
+        checkRange(x, y, z);
+        this.biomes.set(index(x, y, z), BiomeRegistryModule.get().getInternalId(biome));
     }
 
     @Override
     public BiomeType getBiome(int x, int y, int z) {
         checkRange(x, y, z);
-        return BiomeRegistryModule.get().getByInternalId(this.biomes[index(x, y, z)]).orElse(BiomeTypes.OCEAN);
+        return BiomeRegistryModule.get().getByInternalId(this.biomes.get(index(x, y, z))).orElse(BiomeTypes.OCEAN);
     }
 
     @Override
     public MutableBiomeVolume getBiomeCopy(StorageType type) {
+        final int[] intArray = AtomicIntegerArrayHelper.toArray(this.biomes);
         switch (type) {
             case STANDARD:
-                return new ShortArrayMutableBiomeBuffer(this.biomes.clone(), this.start, this.size);
+                return new IntArrayMutableBiomeBuffer(intArray, this.start, this.size);
             case THREAD_SAFE:
-                return new AtomicShortArrayMutableBiomeBuffer(this.biomes, this.start, this.size);
+                return new AtomicIntArrayMutableBiomeBuffer(intArray, this.start, this.size);
             default:
                 throw new UnsupportedOperationException(type.name());
         }
     }
 
-    /**
-     * This method doesn't clone the array passed into it. INTERNAL USE ONLY.
-     * Make sure your code doesn't leak the reference if you're using it.
-     *
-     * @param biomes The biomes to store
-     * @param start The start of the volume
-     * @param size The size of the volume
-     * @return A new buffer using the same array reference
-     */
-    public static ImmutableBiomeVolume newWithoutArrayClone(short[] biomes, Vector3i start, Vector3i size) {
-        return new ShortArrayImmutableBiomeBuffer(start, size, biomes);
+    @Override
+    public ImmutableBiomeVolume getImmutableBiomeCopy() {
+        return IntArrayImmutableBiomeBuffer.newWithoutArrayClone(AtomicIntegerArrayHelper.toArray(this.biomes), this.start, this.size);
     }
 }
