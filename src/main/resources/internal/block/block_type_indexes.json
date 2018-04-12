@@ -565,6 +565,8 @@
   "minecraft:fire_coral_fan*4",
   "minecraft:horn_coral_fan*4",
   "minecraft:sea_pickle*8",
+  "minecraft:blue_ice",
+  "minecraft:conduit",
   "minecraft:void_air",
   "minecraft:cave_air",
   "minecraft:bubble_column*2",
