@@ -53,7 +53,7 @@ public final class TranslationManagerRegistryModule implements RegistryModule {
         this.translationManager.addManager(new MinecraftTranslationManager());
         final LanternTranslationManager lanternTranslationManager = new LanternTranslationManager();
         // Add the lantern languages
-        lanternTranslationManager.addResourceBundle(assetRepository.get("lantern", "lang/en_us.properties").get(), Locale.ENGLISH);
+        lanternTranslationManager.addResourceBundle(assetRepository.get("lantern", "lang/en_us.json").get(), Locale.ENGLISH);
         this.translationManager.addManager(lanternTranslationManager);
         this.translationManager.setDelegateManager(lanternTranslationManager);
     }
