@@ -37,6 +37,13 @@ public interface Palette<T> {
     int INVALID_ID = -1;
 
     /**
+     * Gets whether the palette is local.
+     *
+     * @return Is local
+     */
+    boolean isLocal();
+
+    /**
      * Gets the id for the given {@link T}.
      *
      * @param object The object

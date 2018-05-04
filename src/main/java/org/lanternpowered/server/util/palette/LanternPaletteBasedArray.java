@@ -25,8 +25,9 @@
  */
 package org.lanternpowered.server.util.palette;
 
+import static com.google.common.base.Preconditions.checkState;
+import static org.lanternpowered.server.util.palette.Palette.INVALID_ID;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.lanternpowered.server.world.TrackerIdAllocator.INVALID_ID;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -51,7 +52,7 @@ public class LanternPaletteBasedArray<T> implements PaletteBasedArray<T> {
     /**
      * The palette of this palette based array.
      */
-    protected final Palette<T> palette = constructPalette();
+    protected final Palette<T> palette = new LanternPalette();
 
     /**
      * The array that holds all the block state ids for
@@ -74,32 +75,31 @@ public class LanternPaletteBasedArray<T> implements PaletteBasedArray<T> {
      */
     protected int assignedStates = 0;
 
-    protected static class LanternPalette<T> implements Palette<T> {
-
-        protected final LanternPaletteBasedArray<T> array;
-
-        public LanternPalette(LanternPaletteBasedArray<T> array) {
-            this.array = array;
-        }
+    protected class LanternPalette implements Palette<T> {
 
         @Override
         public Optional<T> get(int id) {
-            return Optional.ofNullable(this.array.internalPalette.get(id));
+            return Optional.ofNullable(internalPalette.get(id));
+        }
+
+        @Override
+        public boolean isLocal() {
+            return internalPalette.isLocal();
         }
 
         @Override
         public int getId(T object) {
-            return this.array.internalPalette.get(object);
+            return internalPalette.get(object);
         }
 
         @Override
         public int getOrAssign(T object) {
-            return this.array.getOrAssignObject(object);
+            return getOrAssignObject(object);
         }
 
         @Override
         public Collection<T> getEntries() {
-            return Collections.unmodifiableCollection(this.array.internalPalette.getEntries());
+            return Collections.unmodifiableCollection(internalPalette.getEntries());
         }
 
         @Override
@@ -107,7 +107,7 @@ public class LanternPaletteBasedArray<T> implements PaletteBasedArray<T> {
             final int[] ids = new int[objects.length];
             int toAssign = 0;
             for (int i = 0; i < objects.length; i++) {
-                final int id = this.array.internalPalette.get(objects[i]);
+                final int id = internalPalette.get(objects[i]);
                 if (id == INVALID_ID) {
                     toAssign++;
                 } else {
@@ -115,7 +115,7 @@ public class LanternPaletteBasedArray<T> implements PaletteBasedArray<T> {
                 }
             }
             if (toAssign != 0) {
-                this.array.expandForAssign(toAssign);
+                expandForAssign(toAssign);
                 for (int i = 0; i < objects.length; i++) {
                     ids[i] = getOrAssign(objects[i]);
                 }
@@ -132,7 +132,7 @@ public class LanternPaletteBasedArray<T> implements PaletteBasedArray<T> {
         this.bits = other.bits;
     }
 
-    public LanternPaletteBasedArray(GlobalPalette<T> globalPalette, int capacity) {
+    public LanternPaletteBasedArray(Palette<T> globalPalette, int capacity) {
         this.globalPalette = new GlobalInternalPalette<>(globalPalette);
         expand(4, capacity);
     }
@@ -143,7 +143,7 @@ public class LanternPaletteBasedArray<T> implements PaletteBasedArray<T> {
      *
      * @param objectIds The object ids
      */
-    public LanternPaletteBasedArray(GlobalPalette<T> globalPalette, int[] objectIds) {
+    public LanternPaletteBasedArray(Palette<T> globalPalette, int[] objectIds) {
         this.globalPalette = new GlobalInternalPalette<>(globalPalette);
 
         final MapBackedInternalPalette<T> palette = new MapBackedInternalPalette<>(16);
@@ -191,7 +191,7 @@ public class LanternPaletteBasedArray<T> implements PaletteBasedArray<T> {
         }
     }
 
-    public LanternPaletteBasedArray(GlobalPalette<T> globalPalette, Collection<T> palette, int capacity, long[] rawBackingData) {
+    public LanternPaletteBasedArray(Palette<T> globalPalette, Collection<T> palette, int capacity, long[] rawBackingData) {
         this.globalPalette = new GlobalInternalPalette<>(globalPalette);
 
         final List<T> paletteList = palette instanceof List ? (List<T>) palette : new ArrayList<>(palette);
@@ -240,10 +240,6 @@ public class LanternPaletteBasedArray<T> implements PaletteBasedArray<T> {
     }
 
     protected void init(InternalPalette<T> internalPalette) {
-    }
-
-    protected Palette<T> constructPalette() {
-        return new LanternPalette<>(this);
     }
 
     private int getOrAssignObject(T object) {
@@ -416,9 +412,10 @@ public class LanternPaletteBasedArray<T> implements PaletteBasedArray<T> {
 
     static class GlobalInternalPalette<T> implements InternalPalette<T> {
 
-        private final GlobalPalette<T> globalPalette;
+        private final Palette<T> globalPalette;
 
-        GlobalInternalPalette(GlobalPalette<T> globalPalette) {
+        GlobalInternalPalette(Palette<T> globalPalette) {
+            checkState(!globalPalette.isLocal());
             this.globalPalette = globalPalette;
         }
 

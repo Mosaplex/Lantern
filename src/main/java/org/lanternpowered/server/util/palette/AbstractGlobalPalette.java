@@ -25,14 +25,10 @@
  */
 package org.lanternpowered.server.util.palette;
 
-public interface GlobalPalette<T> extends Palette<T> {
+public interface AbstractGlobalPalette<T> extends ImmutablePalette<T> {
 
     @Override
-    default int getOrAssign(T object) {
-        final int id = getId(object);
-        if (id != INVALID_ID) {
-            return id;
-        }
-        throw new IllegalStateException("Cannot assign object ids in a global palette.");
+    default boolean isLocal() {
+        return false;
     }
 }

@@ -72,7 +72,7 @@ import org.lanternpowered.server.util.collect.array.NibbleArray;
 import org.lanternpowered.server.world.chunk.LanternChunk;
 import org.lanternpowered.server.world.chunk.LanternChunk.ChunkSection;
 import org.lanternpowered.server.world.chunk.LanternChunk.ChunkSectionSnapshot;
-import org.lanternpowered.server.world.chunk.LanternChunkBlockStateArray;
+import org.lanternpowered.server.world.chunk.ChunkBlockStateArray;
 import org.slf4j.Logger;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
@@ -185,7 +185,7 @@ public class AnvilChunkIOService implements ChunkIOService {
             final NibbleArray blockLightNibbleArray = new NibbleArray(blockLight.length * 2, blockLight, true);
             final NibbleArray skyLightNibbleArray = new NibbleArray(skyLight.length * 2, skyLight, true);
 
-            final LanternChunkBlockStateArray blockStates = LanternChunkBlockStateArray.deserializeFrom(sectionTag);
+            final ChunkBlockStateArray blockStates = ChunkBlockStateArray.deserializeFrom(sectionTag);
 
             tileEntitySections[y] = new Short2ObjectOpenHashMap<>();
             sections[y] = new ChunkSection(blockStates, skyLightNibbleArray, blockLightNibbleArray, tileEntitySections[y]);
@@ -311,7 +311,7 @@ public class AnvilChunkIOService implements ChunkIOService {
             sectionDataView.set(Y, i);
 
             // Serialize blocks data
-            LanternChunkBlockStateArray.serializeTo(sectionDataView, section.blockStates);
+            ChunkBlockStateArray.serializeTo(sectionDataView, section.blockStates);
 
             // Serialize light nibble arrays
             sectionDataView.set(BLOCK_LIGHT, section.lightFromBlock);

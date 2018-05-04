@@ -62,6 +62,7 @@ import org.lanternpowered.server.game.registry.type.world.biome.BiomeRegistryMod
 import org.lanternpowered.server.util.VecHelper;
 import org.lanternpowered.server.util.collect.array.NibbleArray;
 import org.lanternpowered.server.util.collect.array.VariableValueArray;
+import org.lanternpowered.server.util.palette.PaletteBasedArray;
 import org.lanternpowered.server.world.LanternWorld;
 import org.lanternpowered.server.world.TrackerIdAllocator;
 import org.lanternpowered.server.world.extent.AbstractExtent;
@@ -200,7 +201,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
                 this.blocks = blocks;
                 recountTypes();
             } else {
-                this.blocks = new LanternChunkBlockStateArray(CHUNK_SECTION_VOLUME);
+                this.blocks = new ChunkBlockStateArray(CHUNK_SECTION_VOLUME);
             }
             this.tileEntities = new Short2ObjectOpenHashMap<>();
             this.lightFromBlock = new NibbleArray(CHUNK_SECTION_VOLUME);

@@ -23,16 +23,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.world.chunk;
+package org.lanternpowered.server.util.palette;
 
-import org.lanternpowered.server.util.palette.Palette;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.world.schematic.BlockPalette;
-
-import java.util.Optional;
-
-public interface ChunkBlockPalette extends BlockPalette, Palette<BlockState> {
+public interface ImmutablePalette<T> extends Palette<T> {
 
     @Override
-    Optional<Integer> get(BlockState state);
+    default int getOrAssign(T object) {
+        final int id = getId(object);
+        if (id != INVALID_ID) {
+            return id;
+        }
+        throw new IllegalStateException("Cannot assign object ids in a immutable palette.");
+    }
 }

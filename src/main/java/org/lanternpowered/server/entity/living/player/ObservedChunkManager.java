@@ -46,9 +46,9 @@ import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOu
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutMultiBlockChange;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutUnloadChunk;
 import org.lanternpowered.server.util.collect.array.VariableValueArray;
+import org.lanternpowered.server.util.palette.Palette;
 import org.lanternpowered.server.world.LanternWorld;
 import org.lanternpowered.server.world.WorldEventListener;
-import org.lanternpowered.server.world.chunk.ChunkBlockPalette;
 import org.lanternpowered.server.world.chunk.ChunkBlockStateArray;
 import org.lanternpowered.server.world.chunk.LanternChunk;
 import org.spongepowered.api.block.BlockState;
@@ -56,7 +56,6 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.schematic.BlockPaletteTypes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -367,9 +366,9 @@ public final class ObservedChunkManager implements WorldEventListener {
                 if (sections[i] != null) {
                     final LanternChunk.ChunkSectionSnapshot section = sections[i];
                     final ChunkBlockStateArray blockStates = section.blockStates;
-                    final ChunkBlockPalette palette = blockStates.getPalette();
+                    final Palette<BlockState> palette = blockStates.getPalette();
                     int[] intPalette = null;
-                    if (palette.getType() == BlockPaletteTypes.LOCAL) {
+                    if (palette.isLocal()) {
                         intPalette = palette.getEntries().stream()
                                 .mapToInt(state -> BlockRegistryModule.get().getStateInternalId(state))
                                 .toArray();

@@ -1043,7 +1043,7 @@ public final class LanternChunkManager {
             final int nonAirCount = blockBuffer.nonAirCount[sy];
             if (nonAirCount > 0) {
                 final ChunkBlockStateArray blockStateArray =
-                        new LanternChunkBlockStateArray(blockBuffer.types[sy]);
+                        new ChunkBlockStateArray(blockBuffer.types[sy]);
                 sections[sy] = new ChunkSection(blockStateArray);
             }
         }
