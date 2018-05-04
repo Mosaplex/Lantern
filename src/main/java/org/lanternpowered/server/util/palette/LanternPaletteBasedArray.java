@@ -376,12 +376,6 @@ public class LanternPaletteBasedArray<T> implements PaletteBasedArray<T> {
         for (int i = 0; i < capacity; i++) {
             valueArray.set(i, palette.get(this.internalPalette.get(this.objects.get(i))));
         }
-
-        /*
-        dataView.set(BLOCK_STATES_QUERY, valueArray.getBacking());
-        dataView.set(PALETTE_QUERY, palette.getEntries().stream()
-                .map(LanternBlockState::serialize)
-                .collect(Collectors.toList()));*/
         return new Tuple<>(palette.getEntries(), valueArray.getBacking());
     }
 
