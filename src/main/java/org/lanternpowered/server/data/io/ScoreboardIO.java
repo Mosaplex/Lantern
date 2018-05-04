@@ -90,8 +90,6 @@ public class ScoreboardIO {
     private final static DataQuery NAME_TAG_VISIBILITY = DataQuery.of("NameTagVisibility");
     private final static DataQuery DEATH_MESSAGE_VISIBILITY = DataQuery.of("DeathMessageVisibility");
     private final static DataQuery COLLISION_RULE = DataQuery.of("CollisionRule");
-    private final static DataQuery PREFIX = DataQuery.of("Prefix");
-    private final static DataQuery SUFFIX = DataQuery.of("Suffix");
     private final static DataQuery TEAM_COLOR = DataQuery.of("TeamColor");
     private final static DataQuery MEMBERS = DataQuery.of("Players");
     private final static DataQuery TEAMS = DataQuery.of("Teams");
@@ -173,8 +171,6 @@ public class ScoreboardIO {
                     .canSeeFriendlyInvisibles(entry.getInt(CAN_SEE_FRIENDLY_INVISIBLES).orElse(0) > 0)
                     .name(entry.getString(NAME).get())
                     .displayName(LanternTexts.fromLegacy(entry.getString(DISPLAY_NAME).get()))
-                    //.prefix(LanternTexts.fromLegacy(entry.getString(PREFIX).get()))
-                    //.suffix(LanternTexts.fromLegacy(entry.getString(SUFFIX).get()))
                     .members(entry.getStringList(MEMBERS).get().stream().map(LanternTexts::fromLegacy).collect(Collectors.toSet()));
             entry.getString(NAME_TAG_VISIBILITY).ifPresent(value -> builder.nameTagVisibility(Sponge.getRegistry().getAllOf(Visibility.class)
                     .stream().filter(visibility -> visibility.getName().equals(value)).findFirst().orElseGet(() -> {
