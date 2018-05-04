@@ -23,37 +23,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.world.chunk;
+package org.lanternpowered.server.util.palette;
 
-import org.lanternpowered.server.util.palette.PaletteBasedArray;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.DataQuery;
-import org.spongepowered.api.data.DataView;
-
-public interface ChunkBlockStateArray extends PaletteBasedArray<BlockState> {
-
-    /**
-     * This is the integer id that is always assigned to
-     * the {@link BlockState} of {@link BlockTypes#AIR}.
-     */
-    int AIR_ID = 0;
-
-    /**
-     * The {@link DataQuery} of the palette
-     * data within the {@link DataView}.
-     */
-    DataQuery PALETTE_QUERY = DataQuery.of("Palette");
-
-    /**
-     * The {@link DataQuery} of the block state
-     * data within the {@link DataView}.
-     */
-    DataQuery BLOCK_STATES_QUERY = DataQuery.of("BlockStates");
+public interface GlobalPalette<T> extends Palette<T> {
 
     @Override
-    ChunkBlockPalette getPalette();
-
-    @Override
-    ChunkBlockStateArray copy();
+    default int getOrAssign(T object) {
+        final int id = getId(object);
+        if (id != INVALID_ID) {
+            return id;
+        }
+        throw new IllegalStateException("Cannot assign object ids in a global palette.");
+    }
 }

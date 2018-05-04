@@ -241,7 +241,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
          */
         private void recountTypes() {
             this.nonAirCount = 0;
-            final VariableValueArray states = this.blocks.getStates();
+            final VariableValueArray states = this.blocks.getBacking();
             for (int i = 0; i < this.blocks.getCapacity(); i++) {
                 if (states.get(i) != AIR_ID) {
                     this.nonAirCount++;
@@ -585,7 +585,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
                         // Loop down in the section until we may find a
                         // non empty block
                         while (--y >= 0) {
-                            if (section.blocks.getStates().get((y << 8) | index) != AIR_ID) {
+                            if (section.blocks.getBacking().get((y << 8) | index) != AIR_ID) {
                                 values0[0] = j << 4 | y;
                                 values1[0] = true;
                                 break;
@@ -659,7 +659,7 @@ public class LanternChunk implements AbstractExtent, Chunk {
                         // Loop down in the section until we may find a
                         // non empty block
                         while (--y >= 0) {
-                            if (section.blocks.getStates().get((y << 8) | index) != AIR_ID) {
+                            if (section.blocks.getBacking().get((y << 8) | index) != AIR_ID) {
                                 finished[index] = true;
                                 heightMap[index] = (byte) y;
                                 if (++values0[0] >= CHUNK_AREA) {

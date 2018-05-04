@@ -23,37 +23,56 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.world.chunk;
+package org.lanternpowered.server.util.palette;
 
-import org.lanternpowered.server.util.palette.PaletteBasedArray;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.DataQuery;
-import org.spongepowered.api.data.DataView;
+import org.lanternpowered.server.util.collect.array.VariableValueArray;
 
-public interface ChunkBlockStateArray extends PaletteBasedArray<BlockState> {
+public interface PaletteBasedArray<T> {
 
     /**
-     * This is the integer id that is always assigned to
-     * the {@link BlockState} of {@link BlockTypes#AIR}.
+     * Gets the capacity.
+     *
+     * @return The capacity
      */
-    int AIR_ID = 0;
+    int getCapacity();
 
     /**
-     * The {@link DataQuery} of the palette
-     * data within the {@link DataView}.
+     * Gets the {@link T} at the given index.
+     *
+     * @param index The index
+     * @return The object
      */
-    DataQuery PALETTE_QUERY = DataQuery.of("Palette");
+    T get(int index);
 
     /**
-     * The {@link DataQuery} of the block state
-     * data within the {@link DataView}.
+     * Sets the {@link T} at the given index.
+     *
+     * @param index The index
+     * @param object The object
+     * @return The previous assigned value
      */
-    DataQuery BLOCK_STATES_QUERY = DataQuery.of("BlockStates");
+    T set(int index, T object);
 
-    @Override
-    ChunkBlockPalette getPalette();
+    /**
+     * Gets the {@link Palette} of this palette based object
+     * array. Does not allow removal of {@link T}s.
+     *
+     * @return The object palette
+     */
+    Palette<T> getPalette();
 
-    @Override
-    ChunkBlockStateArray copy();
+    /**
+     * Gets the backing {@link VariableValueArray} which
+     * holds the integer ids.
+     *
+     * @return The backing ids array
+     */
+    VariableValueArray getBacking();
+
+    /**
+     * Creates a copy of this {@link PaletteBasedArray}.
+     *
+     * @return The copy
+     */
+    PaletteBasedArray<T> copy();
 }

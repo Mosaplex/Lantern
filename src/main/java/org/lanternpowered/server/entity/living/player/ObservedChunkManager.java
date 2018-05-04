@@ -386,7 +386,7 @@ public final class ObservedChunkManager implements WorldEventListener {
                         final DataView dataView = store.serialize(tileEntityEntry.getValue());
                         tileEntityDataViews.put(tileEntityEntry.getShortKey(), dataView);
                     }
-                    msgSections[i] = new MessagePlayOutChunkData.Section(blockStates.getStates(), intPalette,
+                    msgSections[i] = new MessagePlayOutChunkData.Section(blockStates.getBacking(), intPalette,
                             section.lightFromBlock, section.lightFromSky, tileEntityDataViews);
                 // The insert entry setting is used to send a "null" chunk
                 // after the chunk is already send to the client
